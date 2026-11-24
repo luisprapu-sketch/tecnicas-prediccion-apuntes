@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Tema 3 Modelos ARIMA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>/* Layout: una sola columna de lectura; cada sección = idea simple -> ejemplo -> versión formal; widgets solo donde ayudan */
+:root{
+  --bg:#F6F8FB; --surface:#FFFFFF; --fg:#16212C; --muted:#5B6877; --line:#DCE3EB;
+  --accent:#1D5FBF; --accent-soft:#EAF1FC; --accent-line:#BCD2F2;
+  --warm:#D4571F; --warm-soft:#FDF1EA; --warm-line:#F1CDB8;
+  --good:#23805F; --good-soft:#E6F4EE;
+  --c1:#1D5FBF; --c2:#D4571F; --c3:#23805F; --grid:#E4E9EF;
+  --fd:"Space Grotesk","Inter",system-ui,sans-serif; --fb:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --fm:"STIX Two Text","Cambria Math",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--fb);padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:820px;margin-inline:auto}
+h1{font:700 clamp(1.8rem,5vw,2.5rem)/1.12 var(--fd);margin:0 0 8px;text-wrap:balance}
+h2{font:600 1.55rem/1.2 var(--fd);margin:0 0 4px;text-wrap:balance}
+h3{font:600 1.05rem/1.3 var(--fd);margin:20px 0 6px}
+p{margin:8px 0}
+.lead{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.kick{font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.sec{padding-block:30px 6px;border-top:1px solid var(--line);margin-top:26px}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+nav.toc a{font:500 .85rem var(--fd);color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:5px 12px;border-radius:99px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.box{border-radius:10px;padding:14px 16px;margin:14px 0;border:1px solid var(--line)}
+.box>.lbl{display:block;font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+.simple{background:var(--accent-soft);border-color:var(--accent-line)}.simple>.lbl{color:var(--accent)}
+.ex{background:var(--warm-soft);border-color:var(--warm-line)}.ex>.lbl{color:var(--warm)}
+.formal{background:var(--surface)}.formal>.lbl{color:var(--muted)}
+.how{background:var(--surface)}
+.box p:first-of-type{margin-top:0}.box p:last-child,.box ul:last-child{margin-bottom:0}
+ul{padding-left:1.2em;margin:8px 0}li{margin:4px 0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.grid3>div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.grid3 h4{font:600 .95rem var(--fd);margin:0 0 4px}
+.grid3 p{font-size:.92rem;color:var(--muted);margin:4px 0}
+.f{font-family:var(--fm);font-size:1.15rem;text-align:center;padding:10px 6px;margin:8px 0;overflow-x:auto;background:var(--bg);border-radius:8px;border:1px solid var(--line)}
+.m{font-family:var(--fm);font-style:italic;font-size:1.05em;white-space:nowrap}
+.f .m{font-size:1em}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .75rem var(--fd);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font:600 .72rem var(--fd);padding:2px 8px;border-radius:99px;background:var(--good-soft);color:var(--good)}
+.tag.no{background:var(--warm-soft);color:var(--warm)}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font:.84rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:12px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em}
+/* términos clicables */
+button.g{all:unset;cursor:help;color:inherit;border-bottom:1.6px dotted var(--accent);font:inherit}
+button.g:hover{color:var(--accent);background:var(--accent-soft)}
+button.g:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#pop{position:absolute;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--fg);border:1px solid var(--accent);border-radius:10px;padding:12px 14px 12px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:.92rem;line-height:1.5}
+#pop h5{font:600 .95rem var(--fd);margin:0 22px 4px 0;color:var(--accent)}
+#pop p{margin:0}
+#pop .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1}
+/* widgets */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:16px 0}
+.widget>.wt{font:600 .75rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-bottom:8px}
+.ctrls label{display:flex;align-items:center;gap:8px;font-size:.9rem;min-width:0}
+.ctrls input[type=range]{width:150px;max-width:42vw;accent-color:var(--accent)}
+.ctrls output{font-variant-numeric:tabular-nums;font-weight:600;min-width:2.8em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:500 .85rem var(--fb);background:var(--bg);color:var(--fg);border:0;padding:6px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.plot svg{width:100%;height:auto;display:block}
+.plot2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.plot2 .cap{font:600 .78rem var(--fd);color:var(--muted);margin:2px 0 0 4px}
+.read{font-size:.92rem;background:var(--bg);border-radius:8px;padding:8px 12px;margin:8px 0 0}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin:2px 0 4px}
+.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .tk{fill:var(--muted);font:10.5px var(--fb)}
+svg .xl{fill:var(--muted);font:11px var(--fb)}
+svg .mut{opacity:.45}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:14px 0}
+.flow>.st{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.flow>.st b{display:block;font:600 .95rem var(--fd);margin-bottom:2px}
+.flow>.st span{font-size:.85rem;color:var(--muted)}
+.flow>.ar{align-self:center;color:var(--accent);font-weight:700}
+.nest{border:2px solid var(--accent-line);border-radius:12px;padding:10px 12px;background:var(--accent-soft);margin:12px 0}
+.nest .nest{background:var(--surface);border-color:var(--accent)}
+.nest .nest .nest{background:var(--good-soft);border-color:var(--good)}
+.nest b{font:600 .9rem var(--fd)}.nest small{display:block;color:var(--muted);margin-bottom:6px}
+.trk{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:4px;margin:4px 0}
+.trk i{position:absolute;top:0;bottom:0;border-radius:3px}
+.trk .tr{background:var(--accent)}.trk .pr{background:var(--warm)}
+.trl{font-size:.8rem;color:var(--muted);margin-top:8px}
+input[type=number]{width:84px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){button.g{transition:background .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="kick">Técnicas de Predicción · Tema 3</div>
+<h1>Modelos AR, MA, ARMA, ARIMA y SARIMA</h1>
+<p class="lead">Cómo construir una serie a partir de ruido blanco y cómo elegir, estimar y usar el modelo adecuado para predecir.</p>
+<div class="box how"><span class="lbl">Cómo usar esta página</span>
+<p>Pulsa las palabras con subrayado punteado (<button type="button" class="g" data-k="ar">AR</button>, <button type="button" class="g" data-k="shock">shock</button>, <button type="button" class="g" data-k="invertible">invertibilidad</button>…) para ver su definición. Los controles deslizantes te dejan cambiar los parámetros de cada modelo y ver cómo cambian la serie, su ACF y la predicción.</p></div>
+<nav class="toc" aria-label="Secciones">
+<a href="#s1">1 El mapa</a><a href="#s2">2 Receta</a><a href="#s3">3 AR</a><a href="#s4">4 MA</a><a href="#s5">5 ARMA e identificación</a><a href="#s6">6 ARIMA</a><a href="#s7">7 SARIMA</a><a href="#s8">8 Python</a>
+</nav>
+</header>
+
+<section class="sec" id="s1">
+<h2>1. El mapa de los modelos</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Todos estos modelos parten de lo mismo: cada día llega una sorpresa nueva (<button type="button" class="g" data-k="shock">shock</button>, ruido blanco), y la serie es la forma en que esas sorpresas se acumulan. Cambia el modo de acumularlas:</p>
+<ul><li><button type="button" class="g" data-k="ar">AR</button>: «hoy se parece a ayer». La temperatura de hoy depende de la de ayer.</li>
+<li><button type="button" class="g" data-k="ma">MA</button>: «hoy arrastra las sorpresas recientes». Una noticia impacta hoy y su eco dura uno o dos días.</li>
+<li><button type="button" class="g" data-k="arma">ARMA</button>: las dos cosas a la vez.</li>
+<li><button type="button" class="g" data-k="arima">ARIMA</button>: antes de aplicar ARMA se diferencia la serie, para que tenga tendencia.</li>
+<li><button type="button" class="g" data-k="sarima">SARIMA</button>: además mira a hace un año (o una semana), para estacionalidad.</li></ul></div>
+<div class="flow">
+<div class="st"><b>AR(p)</b><span>depende de sus valores pasados</span></div><div class="ar">+</div>
+<div class="st"><b>MA(q)</b><span>depende de shocks pasados</span></div><div class="ar">=</div>
+<div class="st"><b>ARMA(p,q)</b><span>serie estacionaria</span></div><div class="ar">+ Δ</div>
+<div class="st"><b>ARIMA(p,d,q)</b><span>con tendencia</span></div><div class="ar">+ s</div>
+<div class="st"><b>SARIMA</b><span>con estacionalidad</span></div></div>
+</section>
+
+<section class="sec" id="s2">
+<h2>2. La receta: Box-Jenkins</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Es como ir al médico: primero se prepara al paciente, luego se hace un diagnóstico, se aplica el tratamiento y se comprueba que haya funcionado. Si no funciona, se vuelve atrás.</p></div>
+<div class="flow">
+<div class="st"><b>1. Estacionarizar</b><span><button type="button" class="g" data-k="adf">ADF</button> para decidir cuántas diferencias (d)</span></div><div class="ar">→</div>
+<div class="st"><b>2. Identificar</b><span><button type="button" class="g" data-k="acf">ACF</button> y <button type="button" class="g" data-k="pacf">PACF</button> sugieren p y q</span></div><div class="ar">→</div>
+<div class="st"><b>3. Estimar</b><span>por <button type="button" class="g" data-k="mle">máxima verosimilitud</button></span></div><div class="ar">→</div>
+<div class="st"><b>4. Diagnosticar</b><span>los residuos deben ser ruido blanco (<button type="button" class="g" data-k="ljungbox">Ljung-Box</button>)</span></div><div class="ar">→</div>
+<div class="st"><b>5. Predecir</b><span>con el modelo elegido</span></div></div>
+<p>Si en el paso 4 los residuos aún tienen patrón, se vuelve al paso 2 con otro modelo. Recuerda: la <button type="button" class="g" data-k="boxjenkins">metodología Box-Jenkins</button> termina cuando lo que queda es <button type="button" class="g" data-k="ruidoblanco">ruido blanco</button>.</p>
+</section>
+
+<section class="sec" id="s3">
+<h2>3. Modelo AR: «hoy se parece a ayer»</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Un AR(1) dice: el valor de hoy es una fracción φ del de ayer más una sorpresa nueva. Si φ = 0,9 la serie tiene mucha memoria y se mueve lento. Si φ = 0,1 olvida casi todo de un día para otro. Si φ es negativo, la serie zigzaguea: un día alto, otro bajo.</p></div>
+<div class="widget"><span class="wt">AR(1): mueve φ</span>
+<div class="ctrls"><label>φ <input type="range" id="w1p" min="-0.95" max="0.95" step="0.05" value="0.7"><output id="w1po"></output></label></div>
+<div class="plot2">
+<div><div class="cap">Serie (línea azul) y predicción a 12 pasos (naranja)</div><div class="plot" id="p1a"></div></div>
+<div><div class="cap">ACF teórica: ρ(k) = φ<sup>k</sup></div><div class="plot" id="p1b"></div></div></div>
+<p class="read" id="r1"></p></div>
+<ul><li><b>La ACF</b> baja geométricamente: con φ alto cae despacio; con φ negativo alterna de signo.</li>
+<li><b>La predicción</b> parte del último dato y se acerca a la media (cero aquí) cada vez más: la memoria se va perdiendo.</li>
+<li><b>Con φ cerca de ±1</b> la serie casi deja de ser estacionaria: nunca vuelve a su media.</li></ul>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f">AR(1):  <span class="m">Y<sub>t</sub> = c + φ Y<sub>t−1</sub> + ε<sub>t</sub></span> ,  &nbsp; ε<sub>t</sub> ~ ruido blanco(0, σ²)</div>
+<div class="f"><span class="m">μ = c/(1−φ)</span> &nbsp;&nbsp; <span class="m">Var(Y<sub>t</sub>) = σ<sup>2</sup>/(1−φ<sup>2</sup>)</span> &nbsp;&nbsp; <span class="m">ρ<sub>k</sub> = φ<sup>k</sup></span></div>
+<p>Es <button type="button" class="g" data-k="estacionaria">estacionario</button> si <span class="m">|φ| &lt; 1</span>. Predicción a <span class="m">h</span> pasos:</p>
+<div class="f"><span class="m">Ŷ<sub>T+h|T</sub> = μ + φ<sup>h</sup>(Y<sub>T</sub> − μ)</span></div>
+<p>El AR(p) añade más retardos: <span class="m">Y_t = c + φ_1 Y_{t-1} + … + φ_p Y_{t-p} + ε_t</span>. Para AR(2) las condiciones son <span class="m">φ_1+φ_2 &lt; 1</span>, <span class="m">φ_2−φ_1 &lt; 1</span> y <span class="m">|φ_2| &lt; 1</span>. Rasgo para identificarlo: la <b>PACF se corta</b> tras el retardo p, mientras la ACF decae.</p></div>
+<div class="box ex"><span class="lbl">Ejemplo del tema</span><p>La inflación de EE. UU. se modela con un AR(2): la inflación de hoy depende de las de los dos periodos anteriores, y la predicción vuelve despacio hacia el nivel medio.</p></div>
+</section>
+
+<section class="sec" id="s4">
+<h2>4. Modelo MA: «hoy arrastra las sorpresas recientes»</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Un MA(1) dice: el valor de hoy es la sorpresa de hoy más una parte θ de la sorpresa de ayer. El eco dura justo un periodo y desaparece. Ejemplo: una huelga sorpresa de transporte afecta a las ventas de hoy y, en parte, a las de mañana; pasado mañana ya no se nota.</p></div>
+<div class="widget"><span class="wt">MA(1): mueve θ</span>
+<div class="ctrls"><label>θ <input type="range" id="w2t" min="-0.95" max="0.95" step="0.05" value="0.8"><output id="w2to"></output></label></div>
+<div class="plot2">
+<div><div class="cap">Serie</div><div class="plot" id="p2a"></div></div>
+<div><div class="cap">ACF teórica: solo el retardo 1 es distinto de 0</div><div class="plot" id="p2b"></div></div></div>
+<p class="read" id="r2"></p></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f">MA(1):  <span class="m">Y<sub>t</sub> = μ + ε<sub>t</sub> + θ ε<sub>t−1</sub></span></div>
+<div class="f"><span class="m">Var(Y<sub>t</sub>) = σ<sup>2</sup>(1+θ<sup>2</sup>)</span> &nbsp;&nbsp; <span class="m">ρ<sub>1</sub> = θ/(1+θ<sup>2</sup>)</span> &nbsp;&nbsp; <span class="m">ρ<sub>k</sub> = 0</span> si k ≥ 2</div>
+<p>Un MA siempre es estacionario. La condición de <button type="button" class="g" data-k="invertible">invertibilidad</button> es <span class="m">|θ| &lt; 1</span>. Rasgo para identificarlo: la <b>ACF se corta</b> tras el retardo q y la PACF decae. Predicción: a un paso usa el último shock, <span class="m">Ŷ_{T+1|T} = μ + θ ε_T</span>; a dos o más pasos, el modelo ya no tiene información y predice la media <span class="m">μ</span>.</p></div>
+</section>
+
+<section class="sec" id="s5">
+<h2>5. ARMA y cómo elegir p y q</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Un <button type="button" class="g" data-k="arma">ARMA</button> combina memoria de los valores pasados (parte AR) con eco de las sorpresas pasadas (parte MA). Sirve cuando ni un AR ni un MA solos encajan con pocos parámetros.</p></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f">ARMA(1,1):  <span class="m">Y<sub>t</sub> = c + φ Y<sub>t−1</sub> + ε<sub>t</sub> + θ ε<sub>t−1</sub></span></div>
+<p>Se necesita <span class="m">φ ≠ −θ</span>: si fueran iguales, los dos efectos se cancelarían y la serie sería ruido blanco.</p></div>
+<h3>Reglas para identificar con ACF y PACF</h3>
+<div class="tw"><table>
+<tr><th>Modelo</th><th>ACF</th><th>PACF</th></tr>
+<tr><td>AR(p)</td><td>Decae poco a poco</td><td>Se corta tras el retardo p</td></tr>
+<tr><td>MA(q)</td><td>Se corta tras el retardo q</td><td>Decae poco a poco</td></tr>
+<tr><td>ARMA(p,q)</td><td>Decae</td><td>Decae</td></tr>
+</table></div>
+<div class="widget"><span class="wt">Pruébalo: elige un modelo y mira su ACF y su PACF muestrales</span>
+<div class="ctrls"><div class="seg" id="w3m" role="group" aria-label="Modelo"><button data-v="a1">AR(1)</button><button data-v="a2">AR(2)</button><button data-v="m1">MA(1)</button><button data-v="m2">MA(2)</button><button data-v="am">ARMA(1,1)</button></div></div>
+<div class="plot2">
+<div><div class="cap">ACF</div><div class="plot" id="p3a"></div></div>
+<div><div class="cap">PACF</div><div class="plot" id="p3b"></div></div></div>
+<p class="read" id="r3"></p></div>
+<div class="box ex"><span class="lbl">Ejemplo del notebook: comparar con AIC</span>
+<p>Con la misma serie se ajustaron varios modelos y se compararon con el <button type="button" class="g" data-k="aic">AIC</button> (menor es mejor):</p>
+<div class="tw"><table>
+<tr><th>Modelo</th><th class="n">Parámetros</th><th class="n">AIC</th></tr>
+<tr><td>AR(9)</td><td class="n">9</td><td class="n">571,16</td></tr>
+<tr><td>ARMA(2,1)</td><td class="n">3</td><td class="n">574,93</td></tr>
+<tr><td>MA(12)</td><td class="n">12</td><td class="n">584,66</td></tr></table></div>
+<p>El AR(9) tiene el AIC más bajo, pero el ARMA(2,1) queda a solo 3,8 puntos con una tercera parte de los parámetros: por <button type="button" class="g" data-k="parsimonia">parsimonia</button> es una alternativa muy razonable. El MA(12) pierde en las dos cosas.</p></div>
+</section>
+
+<section class="sec" id="s6">
+<h2>6. ARIMA: cuando hay tendencia</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Un ARMA solo funciona con series estables. Si la serie tiene tendencia, primero se «estabiliza» restando cada dato al anterior (se <button type="button" class="g" data-k="diferencia">diferencia</button>) y después se modela el resultado con un ARMA. La «I» de ARIMA es de <b>integrada</b>: deshacer la diferencia es sumar (integrar).</p>
+<p>El número de veces que diferencias es <b>d</b>. En la práctica d vale 0, 1 o, rara vez, 2, y se decide con el test <button type="button" class="g" data-k="adf">ADF</button>.</p></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f"><span class="m">(1 − φ<sub>1</sub> L − … − φ<sub>p</sub> L<sup>p</sup>)(1−L)<sup>d</sup> Y<sub>t</sub> = c + (1 + θ<sub>1</sub> L + … + θ<sub>q</sub> L<sup>q</sup>) ε<sub>t</sub></span></div>
+<p>Con <button type="button" class="g" data-k="retardo"><span class="m">L</span></button> el operador retardo, <span class="m">(1−L)^d</span> son las d diferencias, la parte izquierda es el AR y el paréntesis de la derecha es el MA. ARIMA(1,0,0) es un AR(1); ARIMA(0,1,0) es un paseo aleatorio.</p></div>
+<div class="box ex"><span class="lbl">Ejemplo del notebook</span>
+<p>Con el PIB de España se ajusta un ARIMA y se predicen 5 periodos. Después se comprueba que la desviación típica de los residuos sea razonable y que parezcan ruido blanco; el intervalo de predicción se ensancha con el horizonte, como en el Tema 1.</p></div>
+</section>
+
+<section class="sec" id="s7">
+<h2>7. SARIMA: cuando también hay estacionalidad</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Un ARIMA mira a ayer y anteayer. Si las ventas de ropa dependen mucho de lo que se vendió hace un año (la Navidad se parece a la Navidad anterior), también hay que mirar a 12 meses atrás. Eso añade al modelo una segunda parte, copia de la primera, pero con retardos de <b>s</b> periodos.</p></div>
+<div class="tw"><table>
+<tr><th>Datos</th><th class="n">Periodo s</th><th>Hay que mirar a…</th></tr>
+<tr><td>Trimestrales</td><td class="n">4</td><td>hace un año (4 trimestres)</td></tr>
+<tr><td>Mensuales</td><td class="n">12</td><td>hace un año (12 meses)</td></tr>
+<tr><td>Diarios</td><td class="n">7</td><td>hace una semana</td></tr>
+</table></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<p>SARIMA(p,d,q)(P,D,Q)<sub>s</sub> multiplica la parte normal por la parte estacional:</p>
+<div class="f"><span class="m">φ(L) Φ(L<sup>s</sup>) (1−L)<sup>d</sup> (1−L<sup>s</sup>)<sup>D</sup> Y<sub>t</sub> = c + θ(L) Θ(L<sup>s</sup>) ε<sub>t</sub></span></div>
+<p>Un ejemplo con s = 4:</p>
+<div class="f"><span class="m">(1 − φ<sub>1</sub> L − φ<sub>2</sub> L<sup>2</sup>)(1 − φ<sub>4</sub> L<sup>4</sup>) Y<sub>t</sub> = c + (1 + θ<sub>4</sub> L<sup>4</sup> + θ<sub>8</sub> L<sup>8</sup>)(1 + θ<sub>1</sub> L) ε<sub>t</sub></span></div>
+<p>Se identifica igual: los retardos estacionales (12, 24… en mensuales) se miran en la ACF y la PACF. Ejemplo del tema: ventas mensuales de ropa en EE. UU.</p></div>
+</section>
+
+<section class="sec" id="s8">
+<h2>8. Python: de los datos a la predicción</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Se separan los últimos datos, se ajusta el modelo con el resto, se predice y se compara con lo reservado. En el notebook AR se entrena con las primeras 89 observaciones y se dejan 6 para comparar; en el MA se entrena con las primeras 655.</p></div>
+<pre>from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+adfuller(y)[1]                           # p-valor: ¿hay que diferenciar?
+modelo = ARIMA(y, order=(p, d, q)).fit() # (1,0,0) = AR(1); (0,0,1) = MA(1)
+print(modelo.summary())                  # coeficientes y AIC
+acorr_ljungbox(modelo.resid, lags=[10])  # ¿residuos = ruido blanco?
+modelo.forecast(steps=5)                 # predicción a 5 pasos</pre>
+<div class="grid3">
+<div><h4>Identificar</h4><p>ACF y PACF → candidatos (p, q).</p></div>
+<div><h4>Elegir</h4><p>AIC más bajo; ante empate, el más simple.</p></div>
+<div><h4>Validar</h4><p>Residuos sin autocorrelación (Ljung-Box).</p></div>
+</div>
+</section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function noise(n,seed,s=1){const r=rng(seed);return Array.from({length:n},()=>{let u=0;while(!u)u=r();const v=r();return s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)})}
+function acfS(y,K){const n=y.length,mu=avg(y),d=y.map(v=>v-mu),c0=d.reduce((a,v)=>a+v*v,0),r=[];for(let k=1;k<=K;k++){let s=0;for(let i=k;i<n;i++)s+=d[i]*d[i-k];r.push(s/c0)}return r}
+function pacfS(y,K){const r=[1,...acfS(y,K)],out=[];let phi=[];for(let k=1;k<=K;k++){let num=r[k],den=1;for(let j=1;j<k;j++){num-=phi[j-1]*r[k-j];den-=phi[j-1]*r[j]}const a=num/den,nf=[];for(let j=1;j<k;j++)nf.push(phi[j-1]-a*phi[k-j-1]);nf.push(a);phi=nf;out.push(a)}return out}
+function arma(n,phi,theta,seed,sig=1){const B=100,N=n+B,e=noise(N,seed,sig),Y=new Array(N).fill(0);for(let t=0;t<N;t++){let v=e[t];phi.forEach((p,i)=>{if(t-i-1>=0)v+=p*Y[t-i-1]});theta.forEach((q,i)=>{if(t-i-1>=0)v+=q*e[t-i-1]});Y[t]=v}return Y.slice(B)}
+function niceTicks(a,b,n){const span=b-a||1,raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<1.5?1:f<3?2:f<7?5:10)*p,t=[];for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)t.push(+v.toFixed(10));return t}
+function fmt(v){const a=Math.abs(v);return a>=100?v.toFixed(0):a>=10?String(+v.toFixed(1)):String(+v.toFixed(2))}
+/* chart: series [{d, x0, c, dash, w, bar, dots, lo, hi, mute}] ; hl [{y}] */
+function chart(el,o){
+  const W=o.w||680,H=o.h||250,m={l:46,r:12,t:10,b:o.xl?38:24};
+  const vals=[];o.series.forEach(s=>{(s.d||[]).forEach(v=>{if(v!=null&&isFinite(v))vals.push(v)});(s.lo||[]).forEach(v=>vals.push(v));(s.hi||[]).forEach(v=>vals.push(v))});
+  (o.hl||[]).forEach(h=>vals.push(h.y));
+  let y0=o.y0,y1=o.y1;
+  if(y0==null||y1==null){const a=Math.min(...vals),b=Math.max(...vals),pad=(b-a)*.08||1;if(y0==null)y0=a-pad;if(y1==null)y1=b+pad}
+  const hasBar=o.series.some(s=>s.bar);
+  const xs=Math.min(...o.series.map(s=>s.x0||0)),xe=Math.max(...o.series.map(s=>(s.x0||0)+s.d.length-1));
+  const xa=(o.x0!=null?o.x0:xs)-(hasBar?.7:0),xb=(o.x1!=null?o.x1:xe)+(hasBar?.7:0);
+  const X=v=>m.l+(v-xa)/((xb-xa)||1)*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/((y1-y0)||1)*(H-m.t-m.b);
+  let g='';
+  niceTicks(y0,y1,4).forEach(t=>{g+=`<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/><text class="tk" x="${m.l-6}" y="${(Y(t)+3.5).toFixed(1)}" text-anchor="end">${fmt(t)}</text>`});
+  niceTicks(xa,xb,7).filter(Number.isInteger).forEach(t=>{g+=`<text class="tk" x="${X(t).toFixed(1)}" y="${H-m.b+14}" text-anchor="middle">${t}</text>`});
+  if(y0<0&&y1>0)g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
+  else g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/>`;
+  if(o.xl)g+=`<text class="xl" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">${o.xl}</text>`;
+  (o.hl||[]).forEach(h=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(h.y).toFixed(1)}" y2="${Y(h.y).toFixed(1)}" style="stroke:${h.c||'var(--muted)'};stroke-width:1.2" stroke-dasharray="${h.dash===0?'':'5 4'}"/>`});
+  o.series.forEach(s=>{
+    const x0=s.x0||0,c=s.c||'var(--c1)';
+    if(s.lo&&s.hi){let p='';s.hi.forEach((v,i)=>{p+=(i?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1)});for(let i=s.lo.length-1;i>=0;i--)p+='L'+X(x0+i).toFixed(1)+' '+Y(s.lo[i]).toFixed(1);g+=`<path d="${p}Z" style="fill:${c};opacity:.18"/>`}
+    if(s.bar){const bw=Math.max(2,(W-m.l-m.r)/((xb-xa)||1)*.55);s.d.forEach((v,i)=>{const yy=Y(Math.max(v,0)),hh=Math.abs(Y(v)-Y(0));g+=`<rect class="${s.mute!=null&&Math.abs(v)<s.mute?'mut':''}" x="${(X(x0+i)-bw/2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(hh,.8).toFixed(1)}" style="fill:${c}"/>`});return}
+    let p='',pen=false;s.d.forEach((v,i)=>{if(v==null||!isFinite(v)){pen=false;return}p+=(pen?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1);pen=true});
+    g+=`<path d="${p}" fill="none" style="stroke:${c};stroke-width:${s.w||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(s.dots)s.d.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${X(x0+i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" style="fill:${c}"/>`});
+  });
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.alt||'gráfico'}">${g}</svg>`;
+}
+function acfChart(el,r,n,o={}){const b=1.96/Math.sqrt(n);chart(el,{series:[{d:r,x0:1,bar:true,c:o.c||'var(--c1)',mute:o.noband?null:b}],hl:o.noband?[]:[{y:b},{y:-b}],y0:-1,y1:1,xl:'retardo k',h:o.h||190,w:o.w||520,alt:o.alt||'autocorrelación'})}
+function bind(ids,fn){const run=()=>{const v={};ids.forEach(id=>{const e=document.getElementById(id);v[id]=e.type==='checkbox'?e.checked:+e.value;const o=document.getElementById(id+'o');if(o)o.textContent=e.value});fn(v)};ids.forEach(id=>document.getElementById(id).addEventListener('input',run));run()}
+function seg(id,fn){const bs=[...document.getElementById(id).querySelectorAll('button')];const set=b=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));fn(b.dataset.v)};bs.forEach(b=>b.addEventListener('click',()=>set(b)));set(bs[0])}
+function initGloss(G){
+  const pop=document.createElement('div');pop.id='pop';pop.hidden=true;pop.setAttribute('role','dialog');document.body.appendChild(pop);let cur=null;
+  const close=()=>{pop.hidden=true;cur=null};
+  const open=b=>{const k=b.dataset.k,e=G[k];if(!e)return;if(cur===b){close();return}cur=b;
+    pop.innerHTML=`<button class="x" aria-label="Cerrar">×</button><h5>${e[0]}</h5><p>${e[1]}</p>`;pop.hidden=false;
+    const r=b.getBoundingClientRect(),sx=window.scrollX,sy=window.scrollY,pw=pop.offsetWidth;
+    let left=r.left+sx;left=Math.min(left,sx+document.documentElement.clientWidth-pw-16);left=Math.max(left,sx+16);
+    pop.style.left=left+'px';pop.style.top=(r.bottom+sy+8)+'px';pop.querySelector('.x').addEventListener('click',close)};
+  document.addEventListener('click',ev=>{const b=ev.target.closest('button.g');if(b){open(b);return}if(!ev.target.closest('#pop'))close()});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape')close()});
+}
+const GLOSS={
+prediccion:["Predicción puntual","Un único número como respuesta. Ej.: «mañana habrá 21 °C»."],
+intervalo:["Intervalo de predicción","Un rango en el que esperamos que caiga el valor futuro con cierta confianza (normalmente 95 %). Ej.: «entre 18 y 24 °C»."],
+densidad:["Predicción de densidad","Damos la probabilidad de cada valor posible, es decir, toda la distribución del futuro. Ej.: «10 % de que haga 18 °C, 25 % de que haga 20 °C…»."],
+horizonte:["Horizonte (h)","Cuántos periodos hacia delante predices. h = 1 es «el próximo dato», h = 5 es «dentro de cinco periodos»."],
+serie:["Serie temporal","Lista de valores de una misma magnitud medidos en momentos consecutivos y ordenados. Ej.: el precio del Brent cada día o el PIB de cada trimestre."],
+proceso:["Proceso estocástico","La «máquina» que genera los datos: una variable aleatoria para cada instante. Lo que observas (la serie) es una sola trayectoria que salió de esa máquina, como una de las muchas listas posibles de lanzar un dado 100 veces."],
+tendencia:["Tendencia","Movimiento de fondo a largo plazo: la serie sube o baja de forma sostenida. Ej.: los pasajeros de una aerolínea crecen año tras año."],
+ciclo:["Ciclo","Subidas y bajadas largas y NO regulares (su duración varía, normalmente más de un año). Ej.: expansión y recesión de la economía."],
+estacionalidad:["Estacionalidad","Patrón que se repite con un periodo fijo y conocido (año, semana, día). Ej.: los helados se venden más cada verano."],
+residuo:["Residuo (parte irregular)","Lo que queda de la serie cuando quitas tendencia y estacionalidad: la parte imprevisible."],
+estacionaria:["Serie estacionaria","Serie «estable»: oscila alrededor de un nivel fijo, con amplitud constante y con la misma relación entre un valor y los anteriores en cualquier momento. Una serie con tendencia no es estacionaria. Es el requisito para usar modelos AR y MA."],
+autocov:["Autocovarianza","Cuánto se mueven juntos el valor de hoy y el de hace k periodos. Si solo depende de k (la distancia) y no de la fecha, se cumple una condición de estacionariedad."],
+adf:["Test ADF (Dickey-Fuller aumentado)","Test que pregunta: «¿la serie vuelve a su nivel o deambula sin rumbo?». H0: la serie NO es estacionaria (tiene raíz unitaria). Si el p-valor es menor que 0,05 se rechaza H0 y concluimos que sí es estacionaria."],
+raizunit:["Raíz unitaria","Característica de las series que «deambulan»: un shock de hoy no se olvida nunca. Ej.: el paseo aleatorio. Estas series no son estacionarias y se arreglan diferenciando."],
+pvalor:["p-valor","Probabilidad de ver un resultado tan extremo como el tuyo si la hipótesis nula fuera cierta. Si es pequeño (menos de 0,05) desconfías de la hipótesis nula y la rechazas."],
+hipnula:["Hipótesis nula (H0)","La afirmación de partida que intentas rechazar con los datos. Ej.: «no hay autocorrelación» o «la serie no es estacionaria». Se rechaza solo si hay evidencia clara (p-valor pequeño)."],
+boxcox:["Transformación Box-Cox","Familia de transformaciones con un parámetro λ: (y^λ − 1)/λ, y log(y) cuando λ = 0. Sirve para que la variabilidad deje de crecer con el nivel de la serie."],
+retardo:["Operador retardo L","Es el botón «ayer»: L·y_t = y_(t−1). Aplicarlo dos veces (L²) lleva a dos periodos atrás."],
+diferencia:["Diferencia","Δy_t = y_t − y_(t−1): lo que ha cambiado la serie respecto al periodo anterior. Quita tendencias."],
+acf:["ACF (autocorrelación)","Correlación de la serie consigo misma k periodos atrás, para k = 1, 2, 3… Responde: «¿cuánto se parece hoy a hace k días?». Va de −1 a 1."],
+pacf:["PACF (autocorrelación parcial)","Correlación con hace k periodos una vez descontado el efecto de los retardos intermedios. Es la influencia «directa» del retardo k."],
+bandas:["Bandas de confianza del ACF","Las dos líneas horizontales en ±1,96/√T. Una barra que no las sobrepasa es compatible con autocorrelación cero (ruido)."],
+ljungbox:["Test de Ljung-Box","Mira de golpe las primeras m autocorrelaciones. H0: todas son cero (no hay autocorrelación). Un p-valor pequeño indica que sí hay patrón sin explicar."],
+ruidoblanco:["Ruido blanco","Serie sin ningún patrón: media cero, varianza constante y ningún valor se relaciona con los anteriores. Como tirar un dado: no hay nada que predecir."],
+gaussiano:["Gaussiano / normal","Que sigue la distribución normal, la campana de Gauss."],
+hetero:["Heterocedasticidad","Que la varianza cambia con el tiempo (rachas de mucha y poca volatilidad, típico de los mercados financieros). Se detecta con la autocorrelación de los cuadrados."],
+shapiro:["Test de Shapiro-Wilk","Test de normalidad. H0: los datos son normales. p-valor pequeño → no son normales."],
+ttest:["Test t de la media","H0: la media vale cero. p-valor pequeño → la media es distinta de cero."],
+mediamovil:["Media móvil","Para cada fecha, la media de los valores cercanos (una «ventana»). Alisa la serie: cuanto más ancha la ventana, más suave la curva."],
+aditivo:["Modelo aditivo","y = tendencia + estacionalidad + residuo. La oscilación estacional mide siempre lo mismo (±10 unidades, por ejemplo)."],
+multiplicativo:["Modelo multiplicativo","y = tendencia × estacionalidad × residuo. La oscilación estacional crece cuando crece el nivel (±10 % de lo que sea). Con logaritmos se vuelve aditivo."],
+deflactor:["Deflactor / ajuste por inflación","Dividir una serie en euros por un índice de precios para expresarla en euros constantes y poder comparar años distintos."],
+stl:["STL","Seasonal and Trend decomposition using Loess. Método de descomposición flexible que permite que la estacionalidad cambie lentamente y resiste valores atípicos."],
+loess:["LOESS","Alisado local: para cada punto ajusta una recta usando solo sus vecinos, dando más peso a los más cercanos."],
+ses:["Suavizado exponencial simple (SES)","Predicción = media ponderada del pasado donde los datos recientes pesan más y los antiguos pesan cada vez menos (de forma exponencial)."],
+alfa:["Parámetro α","Número entre 0 y 1 que decide cuánto caso haces al dato nuevo. α alto: te fías del último dato (reacciona rápido). α bajo: te fías de la historia (más suave)."],
+nivel:["Nivel (ℓ_t)","Tu mejor estimación de «dónde está» la serie ahora, quitando el ruido."],
+ets:["ETS","Error, Trend, Seasonal: familia de modelos de suavizado exponencial. Se describe con tres letras: tipo de error, de tendencia y de estacionalidad (N = ninguna, A = aditiva, M = multiplicativa)."],
+insample:["Dentro de muestra (in-sample)","Medir cómo se ajusta el modelo a los mismos datos con los que se ha estimado. Es optimista."],
+outsample:["Fuera de muestra (out-of-sample)","Medir el error con datos que el modelo no ha visto (los últimos datos reservados). Es la medida honesta de predicción."],
+mae:["MAE","Error absoluto medio: la media de |real − predicho|. Está en las mismas unidades que la serie."],
+mape:["MAPE","Error porcentual absoluto medio: la media de |real − predicho| / |real| × 100. Sirve para comparar series de distinta escala."],
+msfe:["MSFE","Error cuadrático medio de predicción: la media de (real − predicho)². Castiga mucho los errores grandes."],
+recursivo:["Esquema recursivo","Cada vez que reestimas, usas todo el pasado: la muestra de entrenamiento va creciendo."],
+rolling:["Esquema rolling (ventana móvil)","Cada vez que reestimas, usas una ventana de tamaño fijo que avanza y descarta lo más antiguo."],
+aic:["AIC","Criterio de información de Akaike. Premia el buen ajuste y penaliza tener muchos parámetros. Entre varios modelos, el AIC más bajo es el preferible."],
+parsimonia:["Parsimonia","Preferir el modelo más sencillo (menos parámetros) cuando predice casi igual de bien. Evita memorizar el ruido."],
+ar:["AR(p) autorregresivo","Modelo donde el valor de hoy depende de sus p valores anteriores más un shock: «hoy se parece a ayer»."],
+ma:["MA(q) media móvil","Modelo donde el valor de hoy depende de los shocks (sorpresas) de los últimos q periodos. Aquí «media móvil» no es el alisado de antes."],
+arma:["ARMA(p,q)","Mezcla de AR(p) y MA(q): el valor depende de sus valores pasados y de los shocks pasados. Solo para series estacionarias."],
+arima:["ARIMA(p,d,q)","ARMA aplicado a la serie diferenciada d veces. La «I» es de integrada: sirve para series con tendencia."],
+sarima:["SARIMA","ARIMA con parte estacional: además de mirar a ayer, mira a hace un año (o una semana) según el periodo s."],
+shock:["Shock / innovación (ε_t)","La sorpresa nueva de cada periodo: la parte que no se podía saber de antemano. Se modela como ruido blanco."],
+invertible:["Invertibilidad","Condición de un MA (|θ| < 1 en MA(1)) para poder reconstruir los shocks a partir de los datos. Garantiza una representación única."],
+boxjenkins:["Metodología Box-Jenkins","Receta en pasos: hacer estacionaria la serie → identificar p y q con ACF/PACF → estimar → diagnosticar residuos → predecir."],
+mle:["Máxima verosimilitud","Método de estimación: elige los parámetros que hacen más probable haber observado exactamente tus datos."],
+mediaincond:["Media condicional","La media del futuro sabiendo lo que ya ha pasado. Es la predicción puntual."],
+regresion:["Regresión lineal","Ajusta una recta que explica una variable (y) a partir de otra (x): y = α + βx + error. β dice cuánto cambia y cuando x sube una unidad."],
+mco:["Mínimos cuadrados (MCO)","Método que elige la recta que hace mínima la suma de los errores al cuadrado. Funciona bien si los errores son ruido blanco."],
+consistente:["Estimador consistente","Estimador que se acerca al valor verdadero a medida que tienes más datos."],
+cointegracion:["Cointegración","Dos series no estacionarias que se mueven juntas a largo plazo: su combinación (los residuos de la regresión) sí es estacionaria. Si los residuos no lo son, no hay equilibrio a largo plazo entre ellas."],
+r2:["Coeficiente de determinación R²","Porcentaje de la variación de y que explica la regresión. 83 % significa que el modelo recoge el 83 % de lo que se mueve y."],
+exogena:["Variable explicativa (exógena)","Otra serie, distinta de la que quieres predecir, que ayuda a explicarla. Ej.: la temperatura para predecir el consumo de electricidad."],
+desvest:["Varianza","Mide cuánto se aleja la serie de su media (la desviación típica es su raíz cuadrada)."]
+};
+
+initGloss(GLOSS);
+/* W1: AR(1) */
+(()=>{const n=120,e=noise(n,31,1),H=12;
+ bind(['w1p'],v=>{const p=v.w1p,y=[];let prev=0;for(let t=0;t<n;t++){prev=p*prev+e[t];y.push(prev)}
+  const last=y[n-1],fc=[last];for(let h=1;h<=H;h++)fc.push(Math.pow(p,h)*last);
+  const from=n-40;
+  chart($('#p1a'),{h:210,w:520,series:[{d:y.slice(from),x0:from,c:'var(--c1)'},{d:fc,x0:n-1,c:'var(--c2)',dash:'6 4',w:2.4}],hl:[{y:0}],xl:'tiempo',alt:'serie AR(1) y predicción'});
+  acfChart($('#p1b'),Array.from({length:12},(_,k)=>Math.pow(p,k+1)),n,{noband:true,h:210,w:520,alt:'ACF teórica AR(1)'});
+  const vr=1/(1-p*p);
+  $('#r1').innerHTML=`Varianza de la serie = σ²/(1−φ²) = <b>${vr.toFixed(2)}</b>·σ². `+(Math.abs(p)>=.9?'Con φ tan cerca de ±1 la serie casi no vuelve a su media y la varianza se dispara.':p<0?'Con φ negativo la serie zigzaguea y la ACF cambia de signo.':p<=.2?'Con φ pequeño casi no hay memoria: se parece a ruido blanco.':'La predicción se acerca a la media a ritmo φ por periodo.')})})();
+/* W2: MA(1) */
+(()=>{const n=120,e=noise(n+1,41,1);
+ bind(['w2t'],v=>{const t1=v.w2t,y=[];for(let t=0;t<n;t++)y.push(e[t+1]+t1*e[t]);
+  chart($('#p2a'),{h:210,w:520,series:[{d:y,c:'var(--c1)'}],hl:[{y:0}],xl:'tiempo',alt:'serie MA(1)'});
+  const r1=t1/(1+t1*t1);acfChart($('#p2b'),[r1,0,0,0,0,0,0,0],n,{noband:true,h:210,w:520,alt:'ACF teórica MA(1)'});
+  $('#r2').innerHTML=`ρ₁ = θ/(1+θ²) = <b>${r1.toFixed(3)}</b> · varianza = (1+θ²)σ² = <b>${(1+t1*t1).toFixed(2)}</b>σ². Sea cual sea θ, ρ₁ nunca pasa de ±0,5, y a partir del retardo 2 la autocorrelación es cero.`})})();
+/* W3: identificación ACF/PACF */
+(()=>{const n=500,K=15,M={a1:{phi:[.7],th:[],t:'AR(1) con φ=0,7: la ACF decae y la PACF se corta tras el retardo 1.'},a2:{phi:[.4,.4],th:[],t:'AR(2): la ACF decae y la PACF se corta tras el retardo 2.'},m1:{phi:[],th:[.8],t:'MA(1) con θ=0,8: la ACF se corta tras el retardo 1 y la PACF decae.'},m2:{phi:[],th:[.6,.5],t:'MA(2): la ACF se corta tras el retardo 2 y la PACF decae.'},am:{phi:[.7],th:[.6],t:'ARMA(1,1): tanto la ACF como la PACF decaen, sin cortarse. Para distinguirlo hay que comparar modelos con el AIC.'}};
+ seg('w3m',k=>{const m=M[k],y=arma(n,m.phi,m.th,57);acfChart($('#p3a'),acfS(y,K),n,{h:190,w:520});
+  const pc=pacfS(y,K),b=1.96/Math.sqrt(n);chart($('#p3b'),{h:190,w:520,series:[{d:pc,x0:1,bar:true,c:'var(--c3)',mute:b}],hl:[{y:b},{y:-b}],y0:-1,y1:1,xl:'retardo k',alt:'PACF muestral'});
+  $('#r3').textContent=m.t+' (Las barras tenues están dentro de las bandas.)'})})();
+
+</script>
+</body>
+</html>

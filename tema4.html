@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Tema 4 Regresión Dinámica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>/* Layout: una sola columna de lectura; cada sección = idea simple -> ejemplo -> versión formal; widgets solo donde ayudan */
+:root{
+  --bg:#F6F8FB; --surface:#FFFFFF; --fg:#16212C; --muted:#5B6877; --line:#DCE3EB;
+  --accent:#1D5FBF; --accent-soft:#EAF1FC; --accent-line:#BCD2F2;
+  --warm:#D4571F; --warm-soft:#FDF1EA; --warm-line:#F1CDB8;
+  --good:#23805F; --good-soft:#E6F4EE;
+  --c1:#1D5FBF; --c2:#D4571F; --c3:#23805F; --grid:#E4E9EF;
+  --fd:"Space Grotesk","Inter",system-ui,sans-serif; --fb:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --fm:"STIX Two Text","Cambria Math",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--fb);padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:820px;margin-inline:auto}
+h1{font:700 clamp(1.8rem,5vw,2.5rem)/1.12 var(--fd);margin:0 0 8px;text-wrap:balance}
+h2{font:600 1.55rem/1.2 var(--fd);margin:0 0 4px;text-wrap:balance}
+h3{font:600 1.05rem/1.3 var(--fd);margin:20px 0 6px}
+p{margin:8px 0}
+.lead{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.kick{font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.sec{padding-block:30px 6px;border-top:1px solid var(--line);margin-top:26px}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+nav.toc a{font:500 .85rem var(--fd);color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:5px 12px;border-radius:99px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.box{border-radius:10px;padding:14px 16px;margin:14px 0;border:1px solid var(--line)}
+.box>.lbl{display:block;font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+.simple{background:var(--accent-soft);border-color:var(--accent-line)}.simple>.lbl{color:var(--accent)}
+.ex{background:var(--warm-soft);border-color:var(--warm-line)}.ex>.lbl{color:var(--warm)}
+.formal{background:var(--surface)}.formal>.lbl{color:var(--muted)}
+.how{background:var(--surface)}
+.box p:first-of-type{margin-top:0}.box p:last-child,.box ul:last-child{margin-bottom:0}
+ul{padding-left:1.2em;margin:8px 0}li{margin:4px 0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.grid3>div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.grid3 h4{font:600 .95rem var(--fd);margin:0 0 4px}
+.grid3 p{font-size:.92rem;color:var(--muted);margin:4px 0}
+.f{font-family:var(--fm);font-size:1.15rem;text-align:center;padding:10px 6px;margin:8px 0;overflow-x:auto;background:var(--bg);border-radius:8px;border:1px solid var(--line)}
+.m{font-family:var(--fm);font-style:italic;font-size:1.05em;white-space:nowrap}
+.f .m{font-size:1em}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .75rem var(--fd);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font:600 .72rem var(--fd);padding:2px 8px;border-radius:99px;background:var(--good-soft);color:var(--good)}
+.tag.no{background:var(--warm-soft);color:var(--warm)}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font:.84rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:12px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em}
+/* términos clicables */
+button.g{all:unset;cursor:help;color:inherit;border-bottom:1.6px dotted var(--accent);font:inherit}
+button.g:hover{color:var(--accent);background:var(--accent-soft)}
+button.g:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#pop{position:absolute;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--fg);border:1px solid var(--accent);border-radius:10px;padding:12px 14px 12px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:.92rem;line-height:1.5}
+#pop h5{font:600 .95rem var(--fd);margin:0 22px 4px 0;color:var(--accent)}
+#pop p{margin:0}
+#pop .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1}
+/* widgets */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:16px 0}
+.widget>.wt{font:600 .75rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-bottom:8px}
+.ctrls label{display:flex;align-items:center;gap:8px;font-size:.9rem;min-width:0}
+.ctrls input[type=range]{width:150px;max-width:42vw;accent-color:var(--accent)}
+.ctrls output{font-variant-numeric:tabular-nums;font-weight:600;min-width:2.8em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:500 .85rem var(--fb);background:var(--bg);color:var(--fg);border:0;padding:6px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.plot svg{width:100%;height:auto;display:block}
+.plot2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.plot2 .cap{font:600 .78rem var(--fd);color:var(--muted);margin:2px 0 0 4px}
+.read{font-size:.92rem;background:var(--bg);border-radius:8px;padding:8px 12px;margin:8px 0 0}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin:2px 0 4px}
+.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .tk{fill:var(--muted);font:10.5px var(--fb)}
+svg .xl{fill:var(--muted);font:11px var(--fb)}
+svg .mut{opacity:.45}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:14px 0}
+.flow>.st{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.flow>.st b{display:block;font:600 .95rem var(--fd);margin-bottom:2px}
+.flow>.st span{font-size:.85rem;color:var(--muted)}
+.flow>.ar{align-self:center;color:var(--accent);font-weight:700}
+.nest{border:2px solid var(--accent-line);border-radius:12px;padding:10px 12px;background:var(--accent-soft);margin:12px 0}
+.nest .nest{background:var(--surface);border-color:var(--accent)}
+.nest .nest .nest{background:var(--good-soft);border-color:var(--good)}
+.nest b{font:600 .9rem var(--fd)}.nest small{display:block;color:var(--muted);margin-bottom:6px}
+.trk{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:4px;margin:4px 0}
+.trk i{position:absolute;top:0;bottom:0;border-radius:3px}
+.trk .tr{background:var(--accent)}.trk .pr{background:var(--warm)}
+.trl{font-size:.8rem;color:var(--muted);margin-top:8px}
+input[type=number]{width:84px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){button.g{transition:background .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="kick">Técnicas de Predicción · Tema 4</div>
+<h1>Modelos de regresión dinámica</h1>
+<p class="lead">Cómo predecir una serie usando también otras series que la explican. Es la extensión natural del SARIMA: una regresión cuyos errores se modelan con ARMA.</p>
+<div class="box how"><span class="lbl">Cómo usar esta página</span>
+<p>Pulsa las palabras con subrayado punteado (<button type="button" class="g" data-k="mco">MCO</button>, <button type="button" class="g" data-k="cointegracion">cointegración</button>, <button type="button" class="g" data-k="r2">R²</button>…) para ver su definición. Hay dos gráficos con controles deslizantes para ver cómo funciona la regresión y por qué hace falta modelar sus errores.</p></div>
+<nav class="toc" aria-label="Secciones">
+<a href="#s1">1 La idea</a><a href="#s2">2 El problema</a><a href="#s3">3 Receta</a><a href="#s4">4 Ejemplo: tipos de interés</a><a href="#s5">5 Modelo final</a><a href="#s6">6 Python</a><a href="#s7">7 Chuleta</a>
+</nav>
+</header>
+
+<section class="sec" id="s1">
+<h2>1. La idea: no mirar solo el pasado propio</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Hasta ahora, para predecir una serie usábamos solo su propio pasado (AR, MA, ARIMA). Pero a menudo hay otra serie que ayuda. El consumo de electricidad de mañana se explica mejor si además sabes qué temperatura hará; las ventas de helados, si conoces el calor.</p>
+<p>Un modelo de regresión dinámica junta las dos fuentes de información: <b>otras series</b> (<button type="button" class="g" data-k="exogena">variables explicativas</button>) y <b>el patrón del error</b> que dejan.</p></div>
+<div class="flow">
+<div class="st"><b>Regresión</b><span>explica y con otra serie x</span></div><div class="ar">+</div>
+<div class="st"><b>Errores con memoria</b><span>se modelan con ARMA / SARIMA</span></div><div class="ar">=</div>
+<div class="st"><b>Regresión dinámica</b><span>mejores predicciones</span></div></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f"><span class="m">y<sub>t</sub> = α + β x<sub>t</sub> + e<sub>t</sub></span></div>
+<p><span class="m">y_t</span> y <span class="m">x_t</span> son dos series temporales y <span class="m">e_t</span> es el error. A este modelo se le llama <button type="button" class="g" data-k="regresion">regresión</button> con errores de series temporales.</p></div>
+</section>
+
+<section class="sec" id="s2">
+<h2>2. El problema: errores con memoria</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Imagina que mides lo mismo 100 veces, pero cada medida se parece mucho a la anterior. Tienes menos información independiente de la que crees. La regresión normal (<button type="button" class="g" data-k="mco">MCO</button>) da por hecho que cada error es una sorpresa nueva; si los errores arrastran los del día anterior, esa suposición falla.</p></div>
+<div class="tw"><table>
+<tr><th>Errores <span class="m">e_t</span></th><th>Qué pasa con las estimaciones de α y β</th></tr>
+<tr><td><button type="button" class="g" data-k="ruidoblanco">Ruido blanco</button></td><td>MCO da estimadores <button type="button" class="g" data-k="consistente">consistentes</button>: se pueden fiar</td></tr>
+<tr><td>Con correlación en el tiempo</td><td>Pueden no ser consistentes: hay que modelar el error</td></tr>
+</table></div>
+<h3>Primero, cómo funciona la regresión</h3>
+<div class="widget"><span class="wt">Cambia la pendiente β y mira el error</span>
+<div class="ctrls"><label>β <input type="range" id="w1b" min="0" max="1.6" step="0.02" value="0.4"><output id="w1bo"></output></label></div>
+<div class="plot" id="p1"></div>
+<div class="leg"><span><i style="background:var(--c1)"></i>datos (cada punto = un periodo)</span><span><i style="background:var(--c2)"></i>tu recta</span></div>
+<p class="read" id="r1"></p></div>
+<p>Los puntos son cambios semanales de dos tipos de interés simulados. Mover β cambia la recta; los <button type="button" class="g" data-k="mco">mínimos cuadrados</button> eligen la β que deja el error más pequeño. Fíjate en cómo <button type="button" class="g" data-k="r2">R²</button> sube hasta un máximo y luego baja.</p>
+</section>
+
+<section class="sec" id="s3">
+<h2>3. La receta en cinco pasos</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Se empieza con una regresión normal, se mira si lo que sobra tiene patrón y, si lo tiene, se modela. Al final se estima todo junto y se comprueba que los residuos sean ruido blanco.</p></div>
+<div class="flow">
+<div class="st"><b>1. Regresión</b><span>con las series originales; mirar si los residuos tienen correlación</span></div><div class="ar">→</div>
+<div class="st"><b>2. ¿Estacionarios?</b><span>Sí: identificar un modelo SARMA para ellos. No: diferenciar y y x y repetir</span></div><div class="ar">→</div>
+<div class="st"><b>3. Estimar junto</b><span>regresión y errores a la vez, por <button type="button" class="g" data-k="mle">máxima verosimilitud</button></span></div><div class="ar">→</div>
+<div class="st"><b>4. Comprobar</b><span>¿mejoras posibles?</span></div><div class="ar">→</div>
+<div class="st"><b>5. Predecir</b><span>cuando los residuos sean ruido blanco</span></div></div>
+</section>
+
+<section class="sec" id="s4">
+<h2>4. Ejemplo: tipos de interés a 1 y a 3 años</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Queremos explicar el tipo de interés de los bonos del Tesoro de EE. UU. a <b>3 años</b> usando el de <b>1 año</b>. Cuando los bancos suben el interés a corto plazo, el de largo plazo suele subir también. Son datos semanales en porcentaje: 2467 observaciones, del 5 de enero de 1962 al 10 de abril de 2009.</p></div>
+
+<h3>Paso 1: regresión con las series originales</h3>
+<div class="box ex"><span class="lbl">Resultado</span>
+<p>Correlación entre ambas series: 0,9823. Modelo estimado:</p>
+<div class="f"><span class="m">r<sub>3,t</sub> = 0,832 + 0,93 r<sub>1,t</sub> + error</span></div>
+<p><button type="button" class="g" data-k="r2">R²</button> = 96,49 % y error estándar residual = 0,5228. Parece un ajuste casi perfecto.</p></div>
+<p>Pero hay trampa: los <b>residuos son claramente no estacionarios</b> y el <button type="button" class="g" data-k="adf">test ADF</button> pide una diferencia regular. En términos modernos, los dos tipos <b>no están <button type="button" class="g" data-k="cointegracion">cointegrados</button></b>: no hay un equilibrio a largo plazo entre ellos, y ese 96 % no es de fiar.</p>
+
+<h3>Paso 2: trabajar con las variaciones</h3>
+<div class="flow">
+<div class="st"><b>Nueva serie 1</b><span><span class="m">c_{1,t} = (1 − L) r_{1,t}</span><br>variaciones del tipo a 1 año</span></div>
+<div class="st"><b>Nueva serie 2</b><span><span class="m">c_{3,t} = (1 − L) r_{3,t}</span><br>variaciones del tipo a 3 años</span></div></div>
+<div class="box ex"><span class="lbl">Resultado</span>
+<p>Correlación entre las variaciones: 0,9084. Modelo estimado:</p>
+<div class="f"><span class="m">c<sub>3,t</sub> = 0,792 c<sub>1,t</sub> + error</span></div>
+<p>R² = 82,5 % y error estándar residual = 0,0690. Menos R², pero ahora sí es una relación honesta.</p></div>
+<p>Pregunta: ¿los residuos de esta regresión son ruido blanco? <b>No</b>: tienen estructura, y un <button type="button" class="g" data-k="ma">MA(1)</button> puro recoge casi toda. Los retardos 4, 6 y 7 también son significativos, pero la mejora que aportan es pequeña, así que se sigue con el modelo sencillo.</p>
+<div class="widget"><span class="wt">¿Por qué sale un MA(1)? Añade memoria al error y mira la ACF de los residuos</span>
+<div class="ctrls"><label>θ del error <input type="range" id="w2t" min="0" max="0.9" step="0.02" value="0.18"><output id="w2to"></output></label></div>
+<div class="plot" id="p2"></div>
+<p class="read" id="r2"></p></div>
+<p>Con θ = 0 los residuos son ruido blanco y la <button type="button" class="g" data-k="acf">ACF</button> queda dentro de las <button type="button" class="g" data-k="bandas">bandas</button>. Cuando hay un error MA(1), aparece una barra en el retardo 1: esa es la señal que hace pensar en un MA(1). En los datos reales θ ≈ 0,18.</p>
+
+<h3>Paso 3: estimar todo junto</h3>
+<div class="box ex"><span class="lbl">Modelo final (variaciones)</span>
+<div class="f"><span class="m">c<sub>3,t</sub> = 0,794 c<sub>1,t</sub> + e<sub>t</sub></span></div>
+<div class="f"><span class="m">e<sub>t</sub> = a<sub>t</sub> + 0,1823 a<sub>t−1</sub></span> ,  σ<sub>a</sub> = 0,0678</div>
+<p>R² = 83,1 %. Lectura: cuando el tipo a 1 año sube un punto, el de 3 años sube unos 0,79 puntos de media, y además arrastra un 18 % de la sorpresa de la semana anterior.</p></div>
+</section>
+
+<section class="sec" id="s5">
+<h2>5. El modelo final en una sola ecuación</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>El modelo está escrito con variaciones. Para volver a los tipos de interés se «deshacen» las diferencias: el tipo de hoy es el de la semana pasada más lo que ha cambiado.</p></div>
+<div class="box formal"><span class="lbl">Versión formal</span>
+<div class="f"><span class="m">r<sub>3,t</sub> = r<sub>3,t−1</sub> + 0,794 (r<sub>1,t</sub> − r<sub>1,t−1</sub>) + a<sub>t</sub> + 0,182 a<sub>t−1</sub></span></div></div>
+<div class="grid3">
+<div><h4>Su propio pasado</h4><p><span class="m">r_{3,t-1}</span>: el tipo a 3 años de la semana anterior.</p></div>
+<div><h4>Otra serie</h4><p><span class="m">0,794 (r_{1,t} − r_{1,t-1})</span>: lo que ha cambiado el tipo a 1 año.</p></div>
+<div><h4>Errores pasados</h4><p><span class="m">a_t + 0,182 a_{t-1}</span>: la sorpresa de hoy y parte de la de ayer.</p></div>
+</div>
+<p>Es decir, la serie de interés se explica con su propio pasado y con el presente y el pasado de otras series. Con esta ecuación ya se puede predecir.</p>
+</section>
+
+<section class="sec" id="s6">
+<h2>6. Python (plantilla orientativa)</h2>
+<p>El proyecto no incluye notebook de este tema; esta plantilla usa <code>statsmodels</code>.</p>
+<pre>from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+# regresión de r3 sobre r1 con errores MA(1), una diferencia regular
+modelo = SARIMAX(r3, exog=r1, order=(0, 1, 1)).fit()
+print(modelo.summary())       # coeficiente de r1 y theta del MA(1)
+modelo.resid                  # deben ser ruido blanco (Ljung-Box)</pre>
+</section>
+
+<section class="sec" id="s7">
+<h2>7. Chuleta del tema</h2>
+<div class="grid3">
+<div><h4>Idea</h4><p>Predecir y con otras series x más el patrón de los errores.</p></div>
+<div><h4>Peligro</h4><p>Con errores correlacionados, MCO puede no ser consistente.</p></div>
+<div><h4>Si residuos no estacionarios</h4><p>Diferenciar y y x y repetir.</p></div>
+<div><h4>Errores</h4><p>Se modelan con ARMA/SARMA (aquí, un MA(1)).</p></div>
+<div><h4>Estimación</h4><p>Regresión y errores juntos, por máxima verosimilitud.</p></div>
+<div><h4>Listo para predecir</h4><p>Cuando los residuos finales son ruido blanco.</p></div>
+</div>
+</section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function noise(n,seed,s=1){const r=rng(seed);return Array.from({length:n},()=>{let u=0;while(!u)u=r();const v=r();return s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)})}
+function acfS(y,K){const n=y.length,mu=avg(y),d=y.map(v=>v-mu),c0=d.reduce((a,v)=>a+v*v,0),r=[];for(let k=1;k<=K;k++){let s=0;for(let i=k;i<n;i++)s+=d[i]*d[i-k];r.push(s/c0)}return r}
+function pacfS(y,K){const r=[1,...acfS(y,K)],out=[];let phi=[];for(let k=1;k<=K;k++){let num=r[k],den=1;for(let j=1;j<k;j++){num-=phi[j-1]*r[k-j];den-=phi[j-1]*r[j]}const a=num/den,nf=[];for(let j=1;j<k;j++)nf.push(phi[j-1]-a*phi[k-j-1]);nf.push(a);phi=nf;out.push(a)}return out}
+function arma(n,phi,theta,seed,sig=1){const B=100,N=n+B,e=noise(N,seed,sig),Y=new Array(N).fill(0);for(let t=0;t<N;t++){let v=e[t];phi.forEach((p,i)=>{if(t-i-1>=0)v+=p*Y[t-i-1]});theta.forEach((q,i)=>{if(t-i-1>=0)v+=q*e[t-i-1]});Y[t]=v}return Y.slice(B)}
+function niceTicks(a,b,n){const span=b-a||1,raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<1.5?1:f<3?2:f<7?5:10)*p,t=[];for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)t.push(+v.toFixed(10));return t}
+function fmt(v){const a=Math.abs(v);return a>=100?v.toFixed(0):a>=10?String(+v.toFixed(1)):String(+v.toFixed(2))}
+/* chart: series [{d, x0, c, dash, w, bar, dots, lo, hi, mute}] ; hl [{y}] */
+function chart(el,o){
+  const W=o.w||680,H=o.h||250,m={l:46,r:12,t:10,b:o.xl?38:24};
+  const vals=[];o.series.forEach(s=>{(s.d||[]).forEach(v=>{if(v!=null&&isFinite(v))vals.push(v)});(s.lo||[]).forEach(v=>vals.push(v));(s.hi||[]).forEach(v=>vals.push(v))});
+  (o.hl||[]).forEach(h=>vals.push(h.y));
+  let y0=o.y0,y1=o.y1;
+  if(y0==null||y1==null){const a=Math.min(...vals),b=Math.max(...vals),pad=(b-a)*.08||1;if(y0==null)y0=a-pad;if(y1==null)y1=b+pad}
+  const hasBar=o.series.some(s=>s.bar);
+  const xs=Math.min(...o.series.map(s=>s.x0||0)),xe=Math.max(...o.series.map(s=>(s.x0||0)+s.d.length-1));
+  const xa=(o.x0!=null?o.x0:xs)-(hasBar?.7:0),xb=(o.x1!=null?o.x1:xe)+(hasBar?.7:0);
+  const X=v=>m.l+(v-xa)/((xb-xa)||1)*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/((y1-y0)||1)*(H-m.t-m.b);
+  let g='';
+  niceTicks(y0,y1,4).forEach(t=>{g+=`<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/><text class="tk" x="${m.l-6}" y="${(Y(t)+3.5).toFixed(1)}" text-anchor="end">${fmt(t)}</text>`});
+  niceTicks(xa,xb,7).filter(Number.isInteger).forEach(t=>{g+=`<text class="tk" x="${X(t).toFixed(1)}" y="${H-m.b+14}" text-anchor="middle">${t}</text>`});
+  if(y0<0&&y1>0)g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
+  else g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/>`;
+  if(o.xl)g+=`<text class="xl" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">${o.xl}</text>`;
+  (o.hl||[]).forEach(h=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(h.y).toFixed(1)}" y2="${Y(h.y).toFixed(1)}" style="stroke:${h.c||'var(--muted)'};stroke-width:1.2" stroke-dasharray="${h.dash===0?'':'5 4'}"/>`});
+  o.series.forEach(s=>{
+    const x0=s.x0||0,c=s.c||'var(--c1)';
+    if(s.lo&&s.hi){let p='';s.hi.forEach((v,i)=>{p+=(i?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1)});for(let i=s.lo.length-1;i>=0;i--)p+='L'+X(x0+i).toFixed(1)+' '+Y(s.lo[i]).toFixed(1);g+=`<path d="${p}Z" style="fill:${c};opacity:.18"/>`}
+    if(s.bar){const bw=Math.max(2,(W-m.l-m.r)/((xb-xa)||1)*.55);s.d.forEach((v,i)=>{const yy=Y(Math.max(v,0)),hh=Math.abs(Y(v)-Y(0));g+=`<rect class="${s.mute!=null&&Math.abs(v)<s.mute?'mut':''}" x="${(X(x0+i)-bw/2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(hh,.8).toFixed(1)}" style="fill:${c}"/>`});return}
+    let p='',pen=false;s.d.forEach((v,i)=>{if(v==null||!isFinite(v)){pen=false;return}p+=(pen?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1);pen=true});
+    g+=`<path d="${p}" fill="none" style="stroke:${c};stroke-width:${s.w||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(s.dots)s.d.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${X(x0+i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" style="fill:${c}"/>`});
+  });
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.alt||'gráfico'}">${g}</svg>`;
+}
+function acfChart(el,r,n,o={}){const b=1.96/Math.sqrt(n);chart(el,{series:[{d:r,x0:1,bar:true,c:o.c||'var(--c1)',mute:o.noband?null:b}],hl:o.noband?[]:[{y:b},{y:-b}],y0:-1,y1:1,xl:'retardo k',h:o.h||190,w:o.w||520,alt:o.alt||'autocorrelación'})}
+function bind(ids,fn){const run=()=>{const v={};ids.forEach(id=>{const e=document.getElementById(id);v[id]=e.type==='checkbox'?e.checked:+e.value;const o=document.getElementById(id+'o');if(o)o.textContent=e.value});fn(v)};ids.forEach(id=>document.getElementById(id).addEventListener('input',run));run()}
+function seg(id,fn){const bs=[...document.getElementById(id).querySelectorAll('button')];const set=b=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));fn(b.dataset.v)};bs.forEach(b=>b.addEventListener('click',()=>set(b)));set(bs[0])}
+function initGloss(G){
+  const pop=document.createElement('div');pop.id='pop';pop.hidden=true;pop.setAttribute('role','dialog');document.body.appendChild(pop);let cur=null;
+  const close=()=>{pop.hidden=true;cur=null};
+  const open=b=>{const k=b.dataset.k,e=G[k];if(!e)return;if(cur===b){close();return}cur=b;
+    pop.innerHTML=`<button class="x" aria-label="Cerrar">×</button><h5>${e[0]}</h5><p>${e[1]}</p>`;pop.hidden=false;
+    const r=b.getBoundingClientRect(),sx=window.scrollX,sy=window.scrollY,pw=pop.offsetWidth;
+    let left=r.left+sx;left=Math.min(left,sx+document.documentElement.clientWidth-pw-16);left=Math.max(left,sx+16);
+    pop.style.left=left+'px';pop.style.top=(r.bottom+sy+8)+'px';pop.querySelector('.x').addEventListener('click',close)};
+  document.addEventListener('click',ev=>{const b=ev.target.closest('button.g');if(b){open(b);return}if(!ev.target.closest('#pop'))close()});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape')close()});
+}
+const GLOSS={
+prediccion:["Predicción puntual","Un único número como respuesta. Ej.: «mañana habrá 21 °C»."],
+intervalo:["Intervalo de predicción","Un rango en el que esperamos que caiga el valor futuro con cierta confianza (normalmente 95 %). Ej.: «entre 18 y 24 °C»."],
+densidad:["Predicción de densidad","Damos la probabilidad de cada valor posible, es decir, toda la distribución del futuro. Ej.: «10 % de que haga 18 °C, 25 % de que haga 20 °C…»."],
+horizonte:["Horizonte (h)","Cuántos periodos hacia delante predices. h = 1 es «el próximo dato», h = 5 es «dentro de cinco periodos»."],
+serie:["Serie temporal","Lista de valores de una misma magnitud medidos en momentos consecutivos y ordenados. Ej.: el precio del Brent cada día o el PIB de cada trimestre."],
+proceso:["Proceso estocástico","La «máquina» que genera los datos: una variable aleatoria para cada instante. Lo que observas (la serie) es una sola trayectoria que salió de esa máquina, como una de las muchas listas posibles de lanzar un dado 100 veces."],
+tendencia:["Tendencia","Movimiento de fondo a largo plazo: la serie sube o baja de forma sostenida. Ej.: los pasajeros de una aerolínea crecen año tras año."],
+ciclo:["Ciclo","Subidas y bajadas largas y NO regulares (su duración varía, normalmente más de un año). Ej.: expansión y recesión de la economía."],
+estacionalidad:["Estacionalidad","Patrón que se repite con un periodo fijo y conocido (año, semana, día). Ej.: los helados se venden más cada verano."],
+residuo:["Residuo (parte irregular)","Lo que queda de la serie cuando quitas tendencia y estacionalidad: la parte imprevisible."],
+estacionaria:["Serie estacionaria","Serie «estable»: oscila alrededor de un nivel fijo, con amplitud constante y con la misma relación entre un valor y los anteriores en cualquier momento. Una serie con tendencia no es estacionaria. Es el requisito para usar modelos AR y MA."],
+autocov:["Autocovarianza","Cuánto se mueven juntos el valor de hoy y el de hace k periodos. Si solo depende de k (la distancia) y no de la fecha, se cumple una condición de estacionariedad."],
+adf:["Test ADF (Dickey-Fuller aumentado)","Test que pregunta: «¿la serie vuelve a su nivel o deambula sin rumbo?». H0: la serie NO es estacionaria (tiene raíz unitaria). Si el p-valor es menor que 0,05 se rechaza H0 y concluimos que sí es estacionaria."],
+raizunit:["Raíz unitaria","Característica de las series que «deambulan»: un shock de hoy no se olvida nunca. Ej.: el paseo aleatorio. Estas series no son estacionarias y se arreglan diferenciando."],
+pvalor:["p-valor","Probabilidad de ver un resultado tan extremo como el tuyo si la hipótesis nula fuera cierta. Si es pequeño (menos de 0,05) desconfías de la hipótesis nula y la rechazas."],
+hipnula:["Hipótesis nula (H0)","La afirmación de partida que intentas rechazar con los datos. Ej.: «no hay autocorrelación» o «la serie no es estacionaria». Se rechaza solo si hay evidencia clara (p-valor pequeño)."],
+boxcox:["Transformación Box-Cox","Familia de transformaciones con un parámetro λ: (y^λ − 1)/λ, y log(y) cuando λ = 0. Sirve para que la variabilidad deje de crecer con el nivel de la serie."],
+retardo:["Operador retardo L","Es el botón «ayer»: L·y_t = y_(t−1). Aplicarlo dos veces (L²) lleva a dos periodos atrás."],
+diferencia:["Diferencia","Δy_t = y_t − y_(t−1): lo que ha cambiado la serie respecto al periodo anterior. Quita tendencias."],
+acf:["ACF (autocorrelación)","Correlación de la serie consigo misma k periodos atrás, para k = 1, 2, 3… Responde: «¿cuánto se parece hoy a hace k días?». Va de −1 a 1."],
+pacf:["PACF (autocorrelación parcial)","Correlación con hace k periodos una vez descontado el efecto de los retardos intermedios. Es la influencia «directa» del retardo k."],
+bandas:["Bandas de confianza del ACF","Las dos líneas horizontales en ±1,96/√T. Una barra que no las sobrepasa es compatible con autocorrelación cero (ruido)."],
+ljungbox:["Test de Ljung-Box","Mira de golpe las primeras m autocorrelaciones. H0: todas son cero (no hay autocorrelación). Un p-valor pequeño indica que sí hay patrón sin explicar."],
+ruidoblanco:["Ruido blanco","Serie sin ningún patrón: media cero, varianza constante y ningún valor se relaciona con los anteriores. Como tirar un dado: no hay nada que predecir."],
+gaussiano:["Gaussiano / normal","Que sigue la distribución normal, la campana de Gauss."],
+hetero:["Heterocedasticidad","Que la varianza cambia con el tiempo (rachas de mucha y poca volatilidad, típico de los mercados financieros). Se detecta con la autocorrelación de los cuadrados."],
+shapiro:["Test de Shapiro-Wilk","Test de normalidad. H0: los datos son normales. p-valor pequeño → no son normales."],
+ttest:["Test t de la media","H0: la media vale cero. p-valor pequeño → la media es distinta de cero."],
+mediamovil:["Media móvil","Para cada fecha, la media de los valores cercanos (una «ventana»). Alisa la serie: cuanto más ancha la ventana, más suave la curva."],
+aditivo:["Modelo aditivo","y = tendencia + estacionalidad + residuo. La oscilación estacional mide siempre lo mismo (±10 unidades, por ejemplo)."],
+multiplicativo:["Modelo multiplicativo","y = tendencia × estacionalidad × residuo. La oscilación estacional crece cuando crece el nivel (±10 % de lo que sea). Con logaritmos se vuelve aditivo."],
+deflactor:["Deflactor / ajuste por inflación","Dividir una serie en euros por un índice de precios para expresarla en euros constantes y poder comparar años distintos."],
+stl:["STL","Seasonal and Trend decomposition using Loess. Método de descomposición flexible que permite que la estacionalidad cambie lentamente y resiste valores atípicos."],
+loess:["LOESS","Alisado local: para cada punto ajusta una recta usando solo sus vecinos, dando más peso a los más cercanos."],
+ses:["Suavizado exponencial simple (SES)","Predicción = media ponderada del pasado donde los datos recientes pesan más y los antiguos pesan cada vez menos (de forma exponencial)."],
+alfa:["Parámetro α","Número entre 0 y 1 que decide cuánto caso haces al dato nuevo. α alto: te fías del último dato (reacciona rápido). α bajo: te fías de la historia (más suave)."],
+nivel:["Nivel (ℓ_t)","Tu mejor estimación de «dónde está» la serie ahora, quitando el ruido."],
+ets:["ETS","Error, Trend, Seasonal: familia de modelos de suavizado exponencial. Se describe con tres letras: tipo de error, de tendencia y de estacionalidad (N = ninguna, A = aditiva, M = multiplicativa)."],
+insample:["Dentro de muestra (in-sample)","Medir cómo se ajusta el modelo a los mismos datos con los que se ha estimado. Es optimista."],
+outsample:["Fuera de muestra (out-of-sample)","Medir el error con datos que el modelo no ha visto (los últimos datos reservados). Es la medida honesta de predicción."],
+mae:["MAE","Error absoluto medio: la media de |real − predicho|. Está en las mismas unidades que la serie."],
+mape:["MAPE","Error porcentual absoluto medio: la media de |real − predicho| / |real| × 100. Sirve para comparar series de distinta escala."],
+msfe:["MSFE","Error cuadrático medio de predicción: la media de (real − predicho)². Castiga mucho los errores grandes."],
+recursivo:["Esquema recursivo","Cada vez que reestimas, usas todo el pasado: la muestra de entrenamiento va creciendo."],
+rolling:["Esquema rolling (ventana móvil)","Cada vez que reestimas, usas una ventana de tamaño fijo que avanza y descarta lo más antiguo."],
+aic:["AIC","Criterio de información de Akaike. Premia el buen ajuste y penaliza tener muchos parámetros. Entre varios modelos, el AIC más bajo es el preferible."],
+parsimonia:["Parsimonia","Preferir el modelo más sencillo (menos parámetros) cuando predice casi igual de bien. Evita memorizar el ruido."],
+ar:["AR(p) autorregresivo","Modelo donde el valor de hoy depende de sus p valores anteriores más un shock: «hoy se parece a ayer»."],
+ma:["MA(q) media móvil","Modelo donde el valor de hoy depende de los shocks (sorpresas) de los últimos q periodos. Aquí «media móvil» no es el alisado de antes."],
+arma:["ARMA(p,q)","Mezcla de AR(p) y MA(q): el valor depende de sus valores pasados y de los shocks pasados. Solo para series estacionarias."],
+arima:["ARIMA(p,d,q)","ARMA aplicado a la serie diferenciada d veces. La «I» es de integrada: sirve para series con tendencia."],
+sarima:["SARIMA","ARIMA con parte estacional: además de mirar a ayer, mira a hace un año (o una semana) según el periodo s."],
+shock:["Shock / innovación (ε_t)","La sorpresa nueva de cada periodo: la parte que no se podía saber de antemano. Se modela como ruido blanco."],
+invertible:["Invertibilidad","Condición de un MA (|θ| < 1 en MA(1)) para poder reconstruir los shocks a partir de los datos. Garantiza una representación única."],
+boxjenkins:["Metodología Box-Jenkins","Receta en pasos: hacer estacionaria la serie → identificar p y q con ACF/PACF → estimar → diagnosticar residuos → predecir."],
+mle:["Máxima verosimilitud","Método de estimación: elige los parámetros que hacen más probable haber observado exactamente tus datos."],
+mediaincond:["Media condicional","La media del futuro sabiendo lo que ya ha pasado. Es la predicción puntual."],
+regresion:["Regresión lineal","Ajusta una recta que explica una variable (y) a partir de otra (x): y = α + βx + error. β dice cuánto cambia y cuando x sube una unidad."],
+mco:["Mínimos cuadrados (MCO)","Método que elige la recta que hace mínima la suma de los errores al cuadrado. Funciona bien si los errores son ruido blanco."],
+consistente:["Estimador consistente","Estimador que se acerca al valor verdadero a medida que tienes más datos."],
+cointegracion:["Cointegración","Dos series no estacionarias que se mueven juntas a largo plazo: su combinación (los residuos de la regresión) sí es estacionaria. Si los residuos no lo son, no hay equilibrio a largo plazo entre ellas."],
+r2:["Coeficiente de determinación R²","Porcentaje de la variación de y que explica la regresión. 83 % significa que el modelo recoge el 83 % de lo que se mueve y."],
+exogena:["Variable explicativa (exógena)","Otra serie, distinta de la que quieres predecir, que ayuda a explicarla. Ej.: la temperatura para predecir el consumo de electricidad."],
+desvest:["Varianza","Mide cuánto se aleja la serie de su media (la desviación típica es su raíz cuadrada)."]
+};
+
+initGloss(GLOSS);
+function scatter(el,xs,ys,beta,alt){
+  const W=680,H=270,m={l:46,r:12,t:10,b:36};
+  const xa=Math.min(...xs),xb=Math.max(...xs),ya=Math.min(...ys,beta*xa,beta*xb),yb=Math.max(...ys,beta*xa,beta*xb);
+  const px=(xb-xa)*.06,py=(yb-ya)*.08,x0=xa-px,x1=xb+px,y0=ya-py,y1=yb+py;
+  const X=v=>m.l+(v-x0)/(x1-x0)*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  let g='';
+  niceTicks(y0,y1,4).forEach(t=>{g+=`<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/><text class="tk" x="${m.l-6}" y="${(Y(t)+3.5).toFixed(1)}" text-anchor="end">${fmt(t)}</text>`});
+  niceTicks(x0,x1,6).forEach(t=>{g+=`<text class="tk" x="${X(t).toFixed(1)}" y="${H-m.b+14}" text-anchor="middle">${fmt(t)}</text>`});
+  g+=`<text class="xl" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">variación del tipo a 1 año (c1) → eje horizontal; variación a 3 años (c3) → eje vertical</text>`;
+  xs.forEach((x,i)=>{g+=`<circle cx="${X(x).toFixed(1)}" cy="${Y(ys[i]).toFixed(1)}" r="3" style="fill:var(--c1);opacity:.75"/>`});
+  g+=`<line x1="${X(x0).toFixed(1)}" y1="${Y(beta*x0).toFixed(1)}" x2="${X(x1).toFixed(1)}" y2="${Y(beta*x1).toFixed(1)}" style="stroke:var(--c2);stroke-width:2.6"/>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${alt}">${g}</svg>`;
+}
+/* W1: regresión sin constante, c3 = beta*c1 + e */
+(()=>{const n=80,x=noise(n,61,0.25),e=noise(n,62,0.07),y=x.map((v,i)=>0.79*v+e[i]);
+ const sxy=x.reduce((a,v,i)=>a+v*y[i],0),sxx=x.reduce((a,v)=>a+v*v,0),best=sxy/sxx,my=avg(y),sst=y.reduce((a,v)=>a+(v-my)**2,0);
+ bind(['w1b'],v=>{const b=v.w1b,sse=y.reduce((a,yy,i)=>a+(yy-b*x[i])**2,0),r2=Math.max(0,1-sse/sst);
+  scatter($('#p1'),x,y,b,'dispersión de variaciones con recta ajustable');
+  $('#r1').innerHTML=`Error total (suma de cuadrados) = <b>${sse.toFixed(3)}</b> · R² = <b>${(100*r2).toFixed(1)} %</b> · la mejor β de mínimos cuadrados es <b>${best.toFixed(2)}</b>.`})})();
+/* W2: ACF de residuos con error MA(1) */
+(()=>{const n=400,x=noise(n,71,1),a=noise(n+1,72,1);
+ bind(['w2t'],v=>{const th=v.w2t,y=x.map((xi,t)=>0.8*xi+a[t+1]+th*a[t]);
+  const b=x.reduce((s,xi,i)=>s+xi*y[i],0)/x.reduce((s,xi)=>s+xi*xi,0),res=y.map((yy,i)=>yy-b*x[i]),r=acfS(res,12);
+  acfChart($('#p2'),r,n,{h:200,w:680,alt:'ACF de los residuos de la regresión'});
+  $('#r2').innerHTML=`Autocorrelación del residuo en el retardo 1: <b>${r[0].toFixed(2)}</b> (banda ±${(1.96/Math.sqrt(n)).toFixed(2)}). `+(Math.abs(r[0])>1.96/Math.sqrt(n)?'Sobresale de la banda: los residuos tienen memoria, hay que modelarla.':'Dentro de la banda: los residuos son compatibles con ruido blanco.')})})();
+
+</script>
+</body>
+</html>
