@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Guía Práctica de Series</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>/* Layout: una sola columna de lectura; cada sección = idea simple -> ejemplo -> versión formal; widgets solo donde ayudan */
+:root{
+  --bg:#F6F8FB; --surface:#FFFFFF; --fg:#16212C; --muted:#5B6877; --line:#DCE3EB;
+  --accent:#1D5FBF; --accent-soft:#EAF1FC; --accent-line:#BCD2F2;
+  --warm:#D4571F; --warm-soft:#FDF1EA; --warm-line:#F1CDB8;
+  --good:#23805F; --good-soft:#E6F4EE;
+  --c1:#1D5FBF; --c2:#D4571F; --c3:#23805F; --grid:#E4E9EF;
+  --fd:"Space Grotesk","Inter",system-ui,sans-serif; --fb:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --fm:"STIX Two Text","Cambria Math",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1620; --surface:#16212D; --fg:#E7EDF3; --muted:#9BA9B8; --line:#2A3846;
+  --accent:#6EA8FE; --accent-soft:#14233A; --accent-line:#2B4A78;
+  --warm:#F0884F; --warm-soft:#2A1C14; --warm-line:#5A3822;
+  --good:#52C79D; --good-soft:#132A22;
+  --c1:#6EA8FE; --c2:#F0884F; --c3:#52C79D; --grid:#243240; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--fb);padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:820px;margin-inline:auto}
+h1{font:700 clamp(1.8rem,5vw,2.5rem)/1.12 var(--fd);margin:0 0 8px;text-wrap:balance}
+h2{font:600 1.55rem/1.2 var(--fd);margin:0 0 4px;text-wrap:balance}
+h3{font:600 1.05rem/1.3 var(--fd);margin:20px 0 6px}
+p{margin:8px 0}
+.lead{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.kick{font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.sec{padding-block:30px 6px;border-top:1px solid var(--line);margin-top:26px}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+nav.toc a{font:500 .85rem var(--fd);color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:5px 12px;border-radius:99px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.box{border-radius:10px;padding:14px 16px;margin:14px 0;border:1px solid var(--line)}
+.box>.lbl{display:block;font:600 .72rem var(--fd);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+.simple{background:var(--accent-soft);border-color:var(--accent-line)}.simple>.lbl{color:var(--accent)}
+.ex{background:var(--warm-soft);border-color:var(--warm-line)}.ex>.lbl{color:var(--warm)}
+.formal{background:var(--surface)}.formal>.lbl{color:var(--muted)}
+.how{background:var(--surface)}
+.box p:first-of-type{margin-top:0}.box p:last-child,.box ul:last-child{margin-bottom:0}
+ul{padding-left:1.2em;margin:8px 0}li{margin:4px 0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.grid3>div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.grid3 h4{font:600 .95rem var(--fd);margin:0 0 4px}
+.grid3 p{font-size:.92rem;color:var(--muted);margin:4px 0}
+.f{font-family:var(--fm);font-size:1.15rem;text-align:center;padding:10px 6px;margin:8px 0;overflow-x:auto;background:var(--bg);border-radius:8px;border:1px solid var(--line)}
+.m{font-family:var(--fm);font-style:italic;font-size:1.05em;white-space:nowrap}
+.f .m{font-size:1em}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .75rem var(--fd);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font:600 .72rem var(--fd);padding:2px 8px;border-radius:99px;background:var(--good-soft);color:var(--good)}
+.tag.no{background:var(--warm-soft);color:var(--warm)}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font:.84rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:12px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em}
+/* términos clicables */
+button.g{all:unset;cursor:help;color:inherit;border-bottom:1.6px dotted var(--accent);font:inherit}
+button.g:hover{color:var(--accent);background:var(--accent-soft)}
+button.g:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#pop{position:absolute;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--fg);border:1px solid var(--accent);border-radius:10px;padding:12px 14px 12px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:.92rem;line-height:1.5}
+#pop h5{font:600 .95rem var(--fd);margin:0 22px 4px 0;color:var(--accent)}
+#pop p{margin:0}
+#pop .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1}
+/* widgets */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:16px 0}
+.widget>.wt{font:600 .75rem var(--fd);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-bottom:8px}
+.ctrls label{display:flex;align-items:center;gap:8px;font-size:.9rem;min-width:0}
+.ctrls input[type=range]{width:150px;max-width:42vw;accent-color:var(--accent)}
+.ctrls output{font-variant-numeric:tabular-nums;font-weight:600;min-width:2.8em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:500 .85rem var(--fb);background:var(--bg);color:var(--fg);border:0;padding:6px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.plot svg{width:100%;height:auto;display:block}
+.plot2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.plot2 .cap{font:600 .78rem var(--fd);color:var(--muted);margin:2px 0 0 4px}
+.read{font-size:.92rem;background:var(--bg);border-radius:8px;padding:8px 12px;margin:8px 0 0}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin:2px 0 4px}
+.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .tk{fill:var(--muted);font:10.5px var(--fb)}
+svg .xl{fill:var(--muted);font:11px var(--fb)}
+svg .mut{opacity:.45}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:14px 0}
+.flow>.st{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.flow>.st b{display:block;font:600 .95rem var(--fd);margin-bottom:2px}
+.flow>.st span{font-size:.85rem;color:var(--muted)}
+.flow>.ar{align-self:center;color:var(--accent);font-weight:700}
+.nest{border:2px solid var(--accent-line);border-radius:12px;padding:10px 12px;background:var(--accent-soft);margin:12px 0}
+.nest .nest{background:var(--surface);border-color:var(--accent)}
+.nest .nest .nest{background:var(--good-soft);border-color:var(--good)}
+.nest b{font:600 .9rem var(--fd)}.nest small{display:block;color:var(--muted);margin-bottom:6px}
+.trk{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:4px;margin:4px 0}
+.trk i{position:absolute;top:0;bottom:0;border-radius:3px}
+.trk .tr{background:var(--accent)}.trk .pr{background:var(--warm)}
+.trl{font-size:.8rem;color:var(--muted);margin-top:8px}
+input[type=number]{width:84px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){button.g{transition:background .15s}}
+
+/* casos prácticos */
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:8px}
+.case{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.case h4{font:600 1rem var(--fd);margin:0}
+.case .sub{font-size:.8rem;color:var(--muted)}
+.case svg.sp{width:100%;height:64px;display:block}
+.case .sl{font-size:.75rem;color:var(--muted);margin-top:-2px}
+.case p{margin:0;font-size:.9rem}
+.case .do{border-top:1px solid var(--line);padding-top:6px;font-size:.88rem}
+.case .do b{font-family:var(--fd)}
+.case dl{margin:0;font-size:.82rem;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.case dt{color:var(--muted)}.case dd{margin:0;font-variant-numeric:tabular-nums;min-width:0;overflow-wrap:anywhere}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:600 .72rem var(--fd);padding:2px 9px;border-radius:99px;border:1px solid var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+td.ok,td.bad{text-align:center;font:600 .78rem var(--fd);white-space:nowrap}
+td.ok{color:var(--good)}td.bad{color:var(--warm)}
+.tw table.mx{min-width:560px}
+</style>
+<div class="wrap">
+<header>
+<div class="kick">Técnicas de Predicción · Ejercicios prácticos</div>
+<h1>Guía práctica: qué hacer con una serie</h1>
+<p class="lead">El recorrido completo, paso a paso, para cualquier serie de los casos y trabajos: de abrir el archivo a dar la predicción. Reúne lo de los cuatro temas y tus apuntes de la sesión 2.</p>
+<div class="box how"><span class="lbl">Cómo usar esta página</span>
+<p>Sigue los pasos en orden. Cada uno dice <b>qué mirar</b>, <b>cómo decidir</b> y <b>el código</b>. Las palabras con subrayado punteado, como <button type="button" class="g" data-k="adf">ADF</button> o <button type="button" class="g" data-k="ljungbox">Ljung-Box</button>, se pueden pulsar para ver su definición. En el paso 4 hay un decisor: escribes los p-valores que te salen y te dice qué tipo de serie es.</p></div>
+<nav class="toc" aria-label="Pasos">
+<a href="#s0">0 Preparar</a><a href="#s1">1 Mirar</a><a href="#s2">2 Estacionaria</a><a href="#s3">3 Autocorrelación</a><a href="#s4">4 Tipo de ruido</a><a href="#s5">5 Lineal o no</a><a href="#s6">6 Ajustar</a><a href="#s7">7 Diagnosticar</a><a href="#s8">8 Predecir</a><a href="#s9">9 Casos resueltos</a><a href="#s9b">Cómo resolverlos</a><a href="#s10">10 Código</a><a href="#s11">11 Checklist</a>
+</nav>
+</header>
+
+<section class="sec" id="s0">
+<h2>El mapa completo</h2>
+<div class="flow">
+<div class="st"><b>1. Mirar</b><span>el gráfico</span></div><div class="ar">→</div>
+<div class="st"><b>2. ¿Estacionaria?</b><span>ADF; si no, transformar</span></div><div class="ar">→</div>
+<div class="st"><b>3. ¿Autocorrelación?</b><span>ACF, PACF, Ljung-Box</span></div><div class="ar">→</div>
+<div class="st"><b>4. ¿Qué ruido?</b><span>WN, SWN o GWN</span></div></div>
+<div class="flow">
+<div class="st"><b>5. ¿Lineal o no?</b><span>según sea o no WN</span></div><div class="ar">→</div>
+<div class="st"><b>6. Ajustar</b><span>ARIMA(p,d,q)</span></div><div class="ar">→</div>
+<div class="st"><b>7. Diagnosticar</b><span>residuos = ruido blanco</span></div><div class="ar">→</div>
+<div class="st"><b>8. Predecir</b><span>con intervalo y error</span></div></div>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Es como un chequeo médico. Primero miras al paciente (gráfico), luego le haces las pruebas básicas (estacionariedad, autocorrelación), decides el tratamiento (modelo) y compruebas que haya funcionado (residuos). Solo entonces predices.</p></div>
+
+<h3>Paso 0 · Preparar los datos</h3>
+<div class="box ex"><span class="lbl">Qué piden en los trabajos</span>
+<ul><li>Leer el archivo con el código que da el enunciado (separador <code>;</code> y decimal <code>,</code>).</li>
+<li>Fijarse en la <b>granularidad</b> que indica el enunciado (anual, diaria…).</li>
+<li>Responder a las preguntas para los datos <b>originales y los transformados</b>.</li>
+<li>Contestar primero con la <b>intuición</b> (solo gráficos) y luego con <b>tests formales</b>, y comentar si no coinciden.</li></ul></div>
+<pre>import pandas as pd, numpy as np, matplotlib.pyplot as plt
+data = pd.read_csv("archivo.csv", sep=";", decimal=",")
+y = data.iloc[:, 0]          # la serie (columna 0, 1, 2…)
+plt.plot(y); plt.show()</pre>
+</section>
+
+<section class="sec" id="s1">
+<h2>Paso 1. Mirar el gráfico</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Antes de ningún test, dibuja la serie y pregúntate qué ves. El gráfico ya te adelanta casi todas las respuestas, y el enunciado pide dar esa opinión antes de los tests.</p></div>
+<div class="tw"><table>
+<tr><th>Lo que ves</th><th>Qué significa</th><th>Qué hacer</th></tr>
+<tr><td>Sube o baja de forma sostenida</td><td>Tiene <button type="button" class="g" data-k="tendencia">tendencia</button>: no es estacionaria en media</td><td>Diferenciar (Δ)</td></tr>
+<tr><td>La oscilación crece con el nivel</td><td>La varianza no es constante</td><td>Logaritmo</td></tr>
+<tr><td>Patrón que se repite a intervalos fijos</td><td><button type="button" class="g" data-k="estacionalidad">Estacionalidad</button></td><td>Diferencia estacional (Δ<sub>s</sub>) o modelo SARIMA</td></tr>
+<tr><td>Oscila alrededor de un nivel con amplitud estable</td><td>Aspecto de <button type="button" class="g" data-k="estacionaria">estacionaria</button></td><td>Pasar al paso 3</td></tr>
+<tr><td>Rachas de mucha y poca agitación</td><td>Varianza que cambia en el tiempo (<button type="button" class="g" data-k="hetero">heterocedasticidad</button>)</td><td>Mirar los cuadrados (paso 4)</td></tr>
+</table></div>
+<div class="box ex"><span class="lbl">Si la serie son precios</span><p>Con precios (como el Brent) se suele trabajar con los <b>rendimientos</b>: logaritmo y después diferencia, <code>np.log(p).diff().dropna()</code>. Es la misma receta de transformaciones del Tema 1.</p></div>
+</section>
+
+<section class="sec" id="s2">
+<h2>Paso 2. ¿Es estacionaria?</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Se pregunta si la serie «vuelve a su nivel» o se va por ahí. Tus apuntes lo resumen así: estacionaria = <b>media constante y varianza constante</b>. Para la media hay un test formal, el <button type="button" class="g" data-k="adf">ADF</button>.</p></div>
+<div class="box formal"><span class="lbl">Test ADF</span>
+<ul><li>H0: los datos <b>no</b> son estacionarios en la media. H1: son estacionarios.</li>
+<li>Si el <button type="button" class="g" data-k="pvalor">p-valor</button> &lt; 0,05 se rechaza H0: <b>es estacionaria</b>.</li>
+<li>Si el p-valor ≥ 0,05 no se rechaza: <b>no es estacionaria</b>, hay que transformar.</li></ul></div>
+<h3>Cómo transformar</h3>
+<div class="grid3">
+<div><h4>Para la media: Δ</h4><p>Se diferencia. Si sigue sin ser estacionaria, se vuelve a diferenciar y se repite el ADF.</p></div>
+<div><h4>Para la varianza: log</h4><p>Se aplica el logaritmo antes de diferenciar.</p></div>
+<div><h4>Para parar</h4><p>Cuando el ADF da p &lt; 0,05. No diferencies más de lo necesario.</p></div>
+</div>
+<div class="box ex"><span class="lbl">Ejemplo del notebook ARIMA (PIB de España)</span>
+<div class="tw"><table>
+<tr><th>Serie</th><th class="n">Estadístico ADF</th><th class="n">p-valor</th><th>Decisión</th></tr>
+<tr><td>Original</td><td class="n">4,78</td><td class="n">1,0</td><td><span class="tag no">No estacionaria</span></td></tr>
+<tr><td>1 diferencia</td><td class="n">−1,58</td><td class="n">0,49</td><td><span class="tag no">Aún no</span></td></tr>
+<tr><td>2 diferencias</td><td class="n">−11,71</td><td class="n">1,5·10⁻²¹</td><td><span class="tag">Estacionaria</span></td></tr>
+</table></div>
+<p>Conclusión: hacen falta <b>d = 2</b> diferencias.</p></div>
+<pre>from statsmodels.tsa.stattools import adfuller
+adfuller(y, maxlag=10)[1]            # p-valor de la serie original
+z = y.diff().dropna()                # 1.ª diferencia (z.diff().dropna() = 2.ª)
+adfuller(z, maxlag=10)[1]
+# y = np.log(y)  antes de diferenciar si la varianza crece</pre>
+</section>
+
+<section class="sec" id="s3">
+<h2>Paso 3. ¿Hay autocorrelación?</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Se mira si el dato de hoy se parece a los de días anteriores. Si no se parece a ninguno, la serie es impredecible con modelos lineales. Si se parece, hay patrón que aprovechar. En tus apuntes: datos incorrelados = ACF y PACF iguales a cero.</p></div>
+<div class="grid3">
+<div><h4>1. El gráfico</h4><p><button type="button" class="g" data-k="acf">ACF</button> y <button type="button" class="g" data-k="pacf">PACF</button>. Si casi todas las barras quedan dentro de las <button type="button" class="g" data-k="bandas">bandas</button>, no hay autocorrelación.</p></div>
+<div><h4>2. El test</h4><p><button type="button" class="g" data-k="ljungbox">Ljung-Box</button>: H0 datos incorrelados; H1 datos correlados, que lleva a un <b>modelo lineal</b>.</p></div>
+<div><h4>3. La regla</h4><p>p &lt; 0,05: hay autocorrelación. p ≥ 0,05: no la hay.</p></div>
+</div>
+<pre>from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.stats.diagnostic import acorr_ljungbox
+plot_acf(y, lags=25); plot_pacf(y, lags=25, method="ols"); plt.show()
+acorr_ljungbox(y, lags=[20], return_df=True)   # lb_stat y lb_pvalue</pre>
+<p>Ojo: lo normal es hacer este paso con la serie ya estacionaria (original o transformada). Con tendencia, la ACF baja muy despacio y el test siempre rechazará.</p>
+</section>
+
+<section class="sec" id="s4">
+<h2>Paso 4. ¿Qué tipo de ruido blanco es?</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Hay tres niveles, cada uno exige más que el anterior, como tres filtros seguidos. Si fallas el primero, no pasas a los siguientes.</p></div>
+<div class="nest"><b>WN · ruido blanco</b><small>media cero + incorrelado + varianza constante</small>
+<div class="nest"><b><button type="button" class="g" data-k="swn">SWN</button> · ruido blanco estricto</b><small>WN + independiente (se mira en los cuadrados)</small>
+<div class="nest"><b><button type="button" class="g" data-k="gwn">GWN</button> · ruido blanco gaussiano</b><small>SWN + normalidad</small></div></div></div>
+<p>Se cumple GWN ⇒ SWN ⇒ WN, y al revés: si <b>no</b> es WN, tampoco es SWN ni GWN.</p>
+<div class="tw"><table>
+<tr><th>Qué se comprueba</th><th>Test</th><th>H0</th><th>Pasa si…</th></tr>
+<tr><td>Media cero</td><td><button type="button" class="g" data-k="ttest">t de la media</button></td><td>media = 0</td><td>p ≥ 0,05</td></tr>
+<tr><td>Incorrelación</td><td>Ljung-Box sobre <i>y</i></td><td>datos incorrelados</td><td>p ≥ 0,05</td></tr>
+<tr><td>Independencia (SWN)</td><td>Ljung-Box sobre <i>y</i>²</td><td>cuadrados incorrelados</td><td>p ≥ 0,05</td></tr>
+<tr><td>Normalidad (GWN)</td><td><button type="button" class="g" data-k="shapiro">Shapiro-Wilk</button></td><td>datos normales</td><td>p ≥ 0,05</td></tr>
+</table></div>
+<pre>from scipy import stats
+stats.ttest_1samp(y, 0).pvalue                       # media cero
+acorr_ljungbox(y,    lags=[20], return_df=True)      # incorrelación
+acorr_ljungbox(y**2, lags=[20], return_df=True)      # independencia
+stats.shapiro(y).pvalue                              # normalidad</pre>
+
+<div class="widget"><span class="wt">Decisor: escribe tus p-valores y te dice qué serie es</span>
+<div class="ctrls"><div class="seg" id="dm" role="group" aria-label="Ejemplos"><button data-v="s5">Serie 5 (Tema 1)</button><button data-v="gwn">Ruido gaussiano</button><button data-v="trend">Con tendencia</button><button data-v="ret">Tipo rendimientos</button></div></div>
+<div class="ctrls">
+<label>ADF <input type="number" id="d1" step="any" min="0" max="1"></label>
+<label>Media = 0 (t) <input type="number" id="d2" step="any" min="0" max="1"></label>
+<label>Ljung-Box <i>y</i> <input type="number" id="d3" step="any" min="0" max="1"></label>
+<label>Ljung-Box <i>y</i>² <input type="number" id="d4" step="any" min="0" max="1"></label>
+<label>Shapiro <input type="number" id="d5" step="any" min="0" max="1"></label>
+</div>
+<div id="dout"></div>
+<p class="read">Escribe p-valores entre 0 y 1 (admite 7e-5). Los ejemplos rellenan valores típicos; el de la serie 5 usa los resultados del notebook del Tema 1.</p></div>
+</section>
+
+<section class="sec" id="s5">
+<h2>Paso 5. ¿Modelo lineal o no lineal?</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Si hay autocorrelación, un modelo lineal (AR, MA, ARMA, ARIMA) puede explicarla. Si ya no queda ninguna, el lineal no aporta nada. Solo entonces tiene sentido preguntarse si hace falta uno <b>no lineal</b>.</p></div>
+<div class="flow">
+<div class="st"><b>Ljung-Box sobre y rechaza</b><span>hay autocorrelación → <b>modelo lineal</b> (paso 6)</span></div><div class="ar">o</div>
+<div class="st"><b>Ya es WN</b><span>no hace falta lineal → mirar <b>y²</b></span></div></div>
+<p>Se mira <span class="m">y²</span> porque <span class="m">Var(y) = E(y²)</span> cuando la media es cero: si los cuadrados tienen autocorrelación, la varianza tiene estructura y se necesitaría un <button type="button" class="g" data-k="nolineal">modelo no lineal</button>.</p>
+</section>
+
+<section class="sec" id="s6">
+<h2>Paso 6. Elegir y ajustar el modelo</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Con la serie ya estacionaria, la ACF y la PACF te dan pistas sobre cuántos retardos usar. Se prueban uno o dos candidatos y se queda el que mejor encaje, prefiriendo el más sencillo.</p></div>
+<div class="tw"><table>
+<tr><th>Modelo</th><th>ACF</th><th>PACF</th></tr>
+<tr><td><button type="button" class="g" data-k="ar">AR(p)</button></td><td>Decae poco a poco</td><td>Se corta tras p</td></tr>
+<tr><td><button type="button" class="g" data-k="ma">MA(q)</button></td><td>Se corta tras q</td><td>Decae poco a poco</td></tr>
+<tr><td><button type="button" class="g" data-k="arma">ARMA(p,q)</button></td><td>Decae</td><td>Decae</td></tr>
+</table></div>
+<ul><li><b>d</b> = número de diferencias que dio el paso 2 (en el ejemplo del PIB, 2).</li>
+<li>Con datos estacionales se añade la parte estacional: <button type="button" class="g" data-k="sarima">SARIMA</button>, con periodo s (4, 12 o 7).</li>
+<li>Para elegir entre candidatos: <button type="button" class="g" data-k="aic">AIC</button> más bajo y, si empatan, el de menos parámetros (<button type="button" class="g" data-k="parsimonia">parsimonia</button>).</li></ul>
+<pre>from statsmodels.tsa.arima.model import ARIMA
+modelo = ARIMA(y, order=(p, d, q)).fit()   # (1,0,0)=AR(1)  (0,0,1)=MA(1)
+print(modelo.summary())                    # coeficientes y AIC
+residuos = modelo.resid</pre>
+<p>La plantilla de los notebooks empieza con <code>order=(0,0,0)</code> (solo la media) para estudiar los residuos y ver qué estructura queda; luego se cambia el orden.</p>
+</section>
+
+<section class="sec" id="s7">
+<h2>Paso 7. Diagnosticar los residuos</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Si el modelo ha explicado todo lo explicable, lo que sobra (los residuos) debe ser ruido blanco: sin patrón. Se repiten sobre ellos las pruebas del paso 4. Si fallan, el modelo se puede mejorar.</p></div>
+<div class="tw"><table>
+<tr><th>Sobre los residuos</th><th>Se espera</th></tr>
+<tr><td>Gráfico, ACF y PACF</td><td>Todo dentro de las bandas</td></tr>
+<tr><td>Ljung-Box</td><td>p ≥ 0,05 (sin autocorrelación)</td></tr>
+<tr><td>Ljung-Box sobre residuos²</td><td>p ≥ 0,05 (varianza sin estructura)</td></tr>
+<tr><td>Shapiro y cuantiles</td><td>p ≥ 0,05; cuantiles 2,5 % y 97,5 % de los residuos estandarizados cerca de ±1,96</td></tr>
+</table></div>
+<div class="box ex"><span class="lbl">Ejemplo: el modelo (0,0,0) del PIB de España</span>
+<p>Ljung-Box: 1661 (p = 0). Shapiro: p = 3,3·10⁻¹⁶. Ljung-Box de los cuadrados: 791,6 (p ≈ 10⁻¹⁵⁵). Los tres tests rechazan: los residuos están lejos de ser ruido blanco, así que ese modelo es insuficiente.</p></div>
+<pre>res = modelo.resid
+acorr_ljungbox(res,    lags=[25], return_df=True)
+acorr_ljungbox(res**2, lags=[20], return_df=True)
+stats.shapiro(res)
+z = (res - res.mean()) / res.std()
+np.quantile(z, [0.025, 0.975])     # comparar con -1.96 y 1.96</pre>
+</section>
+
+<section class="sec" id="s8">
+<h2>Paso 8. Predecir</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Se pide al modelo la predicción de los próximos periodos con su margen de error. Para saber si acierta, se guardan al principio los últimos datos reales, se predicen y se comparan. En los notebooks se dejan fuera 6 observaciones (AR) o 5 (MA).</p></div>
+<ol>
+<li>Reservar los últimos datos: <code>y = yy[0:89]</code> (entrena) y <code>yy[-6:]</code> (compara).</li>
+<li>Predecir con intervalo: <code>modelo.get_forecast(steps=6)</code>.</li>
+<li>Error = predicción − real. Se miden con <button type="button" class="g" data-k="mae">MAE</button>, <button type="button" class="g" data-k="mape">MAPE</button> o <button type="button" class="g" data-k="msfe">MSFE</button>.</li>
+<li>Intervalo al 95 %: predicción ± 1,96 × error estándar.</li></ol>
+<div class="box ex"><span class="lbl">Ejemplo del notebook AR</span>
+<p>Predicción 2,01 con error estándar 3,66: intervalo = 2,01 ± 1,96 × 3,66, es decir, de unos −5,16 a 9,18.</p></div>
+<div class="box ex"><span class="lbl">Aviso con modelos solo de media (0,0,0)</span>
+<p>Si el modelo no explica nada, la predicción es la misma en todos los horizontes (en el PIB: 741.012 siempre) y el intervalo es enorme. Una predicción plana es señal de que el modelo no aporta información.</p></div>
+<pre>fc = modelo.get_forecast(steps=6)
+pred = fc.predicted_mean            # predicciones puntuales
+se   = fc.se_mean                   # error estándar
+ic   = fc.conf_int(alpha=0.05)      # intervalo al 95 %
+real = yy[-6:].reset_index(drop=True)
+error = pred.reset_index(drop=True) - real
+# si transformaste con log: np.exp(pred) para volver a la escala original</pre>
+</section>
+
+<section class="sec" id="s9">
+<h2>9. Los casos prácticos, resueltos</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Casi todas las series de los casos y trabajos caen en uno de cinco patrones. Reconocer el patrón dice qué hacer. Elige un bloque de casos para ver cada serie con su veredicto.</p></div>
+<div class="grid3">
+<div><h4>Ruido blanco</h4><p>Sin autocorrelación ni tendencia. No hay modelo que ajustar.</p></div>
+<div><h4>Paseo aleatorio</h4><p>No estacionaria; su diferencia es ruido blanco. Se diferencia y se acaba.</p></div>
+<div><h4>Correlada</h4><p>Pico en ACF o PACF. Modelo lineal AR, MA o ARMA (con diferencias si hace falta).</p></div>
+<div><h4>Varianza cambiante</h4><p>Es ruido blanco pero los cuadrados tienen patrón. Modelo no lineal.</p></div>
+<div><h4>Con estacionalidad</h4><p>Picos en el periodo (4, 12, 7). Parte estacional SARIMA.</p></div>
+</div>
+<div class="box how"><span class="lbl">Formato de respuesta del Caso del Tema 1</span>
+<p>El caso pide una tabla con las filas de abajo. Cada una se contesta SÍ, NO o NO SÉ, y siempre con el porqué. Si tomas una transformación, repites la tabla para los datos transformados. Ejemplo con la Serie 4:</p>
+<div class="tw"><table><tr><th>Datos originales</th><th>Respuesta</th><th>Porqué</th></tr>
+<tr><td>Estacionaria</td><td class="ok">SÍ</td><td>ADF p &lt; 0,001: se rechaza la no estacionariedad</td></tr>
+<tr><td>Normal marginal</td><td class="ok">SÍ</td><td>Shapiro p = 0,89</td></tr>
+<tr><td>WN (incorrelada)</td><td class="bad">NO</td><td>Ljung-Box p = 0,0006, hay autocorrelación</td></tr>
+<tr><td>SWN (independiente)</td><td class="bad">NO</td><td>si no es WN, no puede ser SWN</td></tr>
+<tr><td>GWN</td><td class="bad">NO</td><td>necesita ser SWN y normal</td></tr>
+<tr><td>Modelo lineal (media)</td><td class="ok">SÍ</td><td>pico en el retardo 1: MA(1) o AR(1)</td></tr>
+<tr><td>Modelo no lineal (varianza)</td><td class="bad">NO</td><td>cuadrados sin estructura (p = 0,29)</td></tr>
+<tr><td>Transformaciones</td><td class="bad">NO</td><td>ya es estacionaria</td></tr></table></div>
+<p>Los datos transformados (por ejemplo la Serie 5 tras una diferencia) se rellenan igual, con las mismas filas.</p></div>
+<div class="widget"><span class="wt">Casos prácticos del curso</span>
+<div class="ctrls"><div class="seg" id="cg" role="group" aria-label="Bloque de casos"></div></div>
+<div class="tw" id="cm" hidden></div>
+<div class="cases" id="cc"></div>
+<p class="read">Los p-valores salen de los datos de tus archivos. Las series de los notebooks y del Tema 3 usan los resultados explicados antes. Los modelos propuestos para los trabajos son los que mejor funcionan con mis pruebas, así que compáralos con lo que visteis en clase.</p></div>
+</section>
+
+<section class="sec" id="s9b">
+<h2>Cómo resolver cada tipo de caso</h2>
+<div class="box simple"><span class="lbl">Idea simple</span>
+<p>Cada caso del curso tiene su receta. Los casos de series (Tema 1, grupo e individual) siguen la misma tabla de preguntas. El Tema 3 añade modelar y predecir. El Tema 4 compara variables con una regresión.</p></div>
+
+<h3>Caso Tema 1 y trabajos: ¿qué tipo de serie es?</h3>
+<div class="flow">
+<div class="st"><b>1. Gráfico</b><span>¿Tendencia, estacionalidad, varianza que cambia?</span></div><div class="ar">→</div>
+<div class="st"><b>2. ADF</b><span>p &lt; 0,05: estacionaria. Si no, Δ (o log y Δ).</span></div><div class="ar">→</div>
+<div class="st"><b>3. Media y Ljung-Box</b><span>Media 0 y p ≥ 0,05: WN.</span></div><div class="ar">→</div>
+<div class="st"><b>4. Ljung-Box de y²</b><span>p ≥ 0,05: SWN. Shapiro ≥ 0,05: GWN.</span></div><div class="ar">→</div>
+<div class="st"><b>5. Modelo</b><span>No WN: ARMA. WN con y² con estructura: no lineal.</span></div>
+</div>
+<p>Se contesta en la tabla SÍ/NO/NO SÉ con el porqué, para los datos originales y, si hubo transformación, para los transformados.</p>
+
+<h3>Caso Tema 3: modelar y predecir</h3>
+<div class="flow">
+<div class="st"><b>1. Estacionarizar</b><span>Δ para la media, log para la varianza. Con estacionalidad, mira el retardo del periodo.</span></div><div class="ar">→</div>
+<div class="st"><b>2. ACF y PACF</b><span>Elige p y q. Prueba pocos modelos y compara AIC.</span></div><div class="ar">→</div>
+<div class="st"><b>3. Residuos</b><span>Ljung-Box ≥ 0,05 y Shapiro ≥ 0,05.</span></div><div class="ar">→</div>
+<div class="st"><b>4. Predecir</b><span><code>get_forecast</code>, intervalo ±1,96·se. Si usaste log, aplica exp().</span></div>
+</div>
+
+<h3>Caso Tema 4: regresión dinámica (índice bursátil)</h3>
+<div class="flow">
+<div class="st"><b>1. MCO en niveles</b><span>R² = 94,7 %, pero DW = 0,28: sospecha de regresión espuria.</span></div><div class="ar">→</div>
+<div class="st"><b>2. ADF a todas</b><span>Las cuatro no son estacionarias en niveles; en Δ sí.</span></div><div class="ar">→</div>
+<div class="st"><b>3. Diferenciar</b><span>Δíndice sobre Δlargo, Δcorto y Δ€/<span class="m">.</span></div><div class="ar">→</div>
+<div class="st"><b>4. Errores</b><span>ACF/PACF de residuos: ruido blanco, no hace falta ARMA.</span></div><div class="ar">→</div>
+<div class="st"><b>5. Estimar junto</b><span>Solo cuentan largo y €/</span>. Residuos WN y normales.</span></div><div class="ar">→</div>
+<div class="st"><b>6. Predecir</b><span>Último dato + efecto de los cambios: 3.357 − 284 = 3.073.</span></div>
+</div>
+<pre>y = d["Index"]; X = d[["lt", "st", "fx"]]
+print(sm.OLS(y, sm.add_constant(X)).fit().summary())       # 1
+for c in d.columns[1:]: print(adfuller(d[c])[1], adfuller(d[c].diff().dropna())[1])  # 2
+m = SARIMAX(y, exog=X, order=(0,1,0)).fit()                 # 3-5 (d=1 diferencia todo)
+print(m.summary()); print(acorr_ljungbox(m.resid[1:], lags=[10]))
+new = pd.DataFrame({"lt":[12.4], "st":[8.6], "fx":[0.85]})
+print(m.get_forecast(steps=1, exog=new).summary_frame())    # 6</pre>
+<div class="box ex"><span class="lbl">Error típico</span>
+<p>Predecir con la regresión en niveles porque tiene R² alto. Aquí daría 2.999,8, pero sus residuos están autocorrelados y las series no son estacionarias, así que no es fiable.</p></div>
+</section>
+<section class="sec" id="s10">
+<h2>10. Plantilla completa de código</h2>
+<pre>import pandas as pd, numpy as np, matplotlib.pyplot as plt
+import scipy.stats as st
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+data = pd.read_csv("archivo.csv", sep=";", decimal=",")
+y = data.iloc[:, 0]; plt.plot(y); plt.show()            # 1. mirar
+
+print(adfuller(y, maxlag=10)[1])                         # 2. ADF
+# y = np.log(y)   (varianza)    y = y.diff().dropna()   (media)
+
+plot_acf(y, lags=25); plot_pacf(y, lags=25, method="ols")  # 3. ACF/PACF
+print(acorr_ljungbox(y, lags=[20]))                      # Ljung-Box
+
+print(st.ttest_1samp(y, 0).pvalue)                       # 4. tipo de ruido
+print(acorr_ljungbox(y**2, lags=[20]))
+print(st.shapiro(y).pvalue)
+
+m = ARIMA(y, order=(1, 0, 0)).fit()                      # 6. ajustar
+res = m.resid                                            # 7. diagnosticar
+print(acorr_ljungbox(res, lags=[20]), st.shapiro(res))
+fc = m.get_forecast(steps=5)                             # 8. predecir
+print(fc.predicted_mean, fc.conf_int())</pre>
+</section>
+
+<section class="sec" id="s11">
+<h2>11. Checklist para entregar</h2>
+<div class="grid3">
+<div><h4>Para cada serie</h4><p>Responde con la serie original y con la transformada, siguiendo el formato del enunciado.</p></div>
+<div><h4>Intuición y tests</h4><p>Primero lo que ves en el gráfico; después los tests. Si no coinciden, dilo.</p></div>
+<div><h4>Orden de las preguntas</h4><p>Estacionaria → correlada → WN → SWN → GWN → ¿modelo lineal? → ¿modelo no lineal?</p></div>
+<div><h4>Con p-valores</h4><p>Escribe siempre el p-valor y la decisión: «p = 0,58 ≥ 0,05, no se rechaza H0, no estacionaria».</p></div>
+<div><h4>Transformaciones</h4><p>Δ para la media, log para la varianza. Indica cuáles aplicas y por qué.</p></div>
+<div><h4>Entrega</h4><p>Nombre completo (trabajo individual) o grupo (trabajo de grupo) en el archivo, como pide el enunciado.</p></div>
+</div>
+</section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function noise(n,seed,s=1){const r=rng(seed);return Array.from({length:n},()=>{let u=0;while(!u)u=r();const v=r();return s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)})}
+function acfS(y,K){const n=y.length,mu=avg(y),d=y.map(v=>v-mu),c0=d.reduce((a,v)=>a+v*v,0),r=[];for(let k=1;k<=K;k++){let s=0;for(let i=k;i<n;i++)s+=d[i]*d[i-k];r.push(s/c0)}return r}
+function pacfS(y,K){const r=[1,...acfS(y,K)],out=[];let phi=[];for(let k=1;k<=K;k++){let num=r[k],den=1;for(let j=1;j<k;j++){num-=phi[j-1]*r[k-j];den-=phi[j-1]*r[j]}const a=num/den,nf=[];for(let j=1;j<k;j++)nf.push(phi[j-1]-a*phi[k-j-1]);nf.push(a);phi=nf;out.push(a)}return out}
+function arma(n,phi,theta,seed,sig=1){const B=100,N=n+B,e=noise(N,seed,sig),Y=new Array(N).fill(0);for(let t=0;t<N;t++){let v=e[t];phi.forEach((p,i)=>{if(t-i-1>=0)v+=p*Y[t-i-1]});theta.forEach((q,i)=>{if(t-i-1>=0)v+=q*e[t-i-1]});Y[t]=v}return Y.slice(B)}
+function niceTicks(a,b,n){const span=b-a||1,raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<1.5?1:f<3?2:f<7?5:10)*p,t=[];for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)t.push(+v.toFixed(10));return t}
+function fmt(v){const a=Math.abs(v);return a>=100?v.toFixed(0):a>=10?String(+v.toFixed(1)):String(+v.toFixed(2))}
+/* chart: series [{d, x0, c, dash, w, bar, dots, lo, hi, mute}] ; hl [{y}] */
+function chart(el,o){
+  const W=o.w||680,H=o.h||250,m={l:46,r:12,t:10,b:o.xl?38:24};
+  const vals=[];o.series.forEach(s=>{(s.d||[]).forEach(v=>{if(v!=null&&isFinite(v))vals.push(v)});(s.lo||[]).forEach(v=>vals.push(v));(s.hi||[]).forEach(v=>vals.push(v))});
+  (o.hl||[]).forEach(h=>vals.push(h.y));
+  let y0=o.y0,y1=o.y1;
+  if(y0==null||y1==null){const a=Math.min(...vals),b=Math.max(...vals),pad=(b-a)*.08||1;if(y0==null)y0=a-pad;if(y1==null)y1=b+pad}
+  const hasBar=o.series.some(s=>s.bar);
+  const xs=Math.min(...o.series.map(s=>s.x0||0)),xe=Math.max(...o.series.map(s=>(s.x0||0)+s.d.length-1));
+  const xa=(o.x0!=null?o.x0:xs)-(hasBar?.7:0),xb=(o.x1!=null?o.x1:xe)+(hasBar?.7:0);
+  const X=v=>m.l+(v-xa)/((xb-xa)||1)*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/((y1-y0)||1)*(H-m.t-m.b);
+  let g='';
+  niceTicks(y0,y1,4).forEach(t=>{g+=`<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/><text class="tk" x="${m.l-6}" y="${(Y(t)+3.5).toFixed(1)}" text-anchor="end">${fmt(t)}</text>`});
+  niceTicks(xa,xb,7).filter(Number.isInteger).forEach(t=>{g+=`<text class="tk" x="${X(t).toFixed(1)}" y="${H-m.b+14}" text-anchor="middle">${t}</text>`});
+  if(y0<0&&y1>0)g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
+  else g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/>`;
+  if(o.xl)g+=`<text class="xl" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">${o.xl}</text>`;
+  (o.hl||[]).forEach(h=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(h.y).toFixed(1)}" y2="${Y(h.y).toFixed(1)}" style="stroke:${h.c||'var(--muted)'};stroke-width:1.2" stroke-dasharray="${h.dash===0?'':'5 4'}"/>`});
+  o.series.forEach(s=>{
+    const x0=s.x0||0,c=s.c||'var(--c1)';
+    if(s.lo&&s.hi){let p='';s.hi.forEach((v,i)=>{p+=(i?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1)});for(let i=s.lo.length-1;i>=0;i--)p+='L'+X(x0+i).toFixed(1)+' '+Y(s.lo[i]).toFixed(1);g+=`<path d="${p}Z" style="fill:${c};opacity:.18"/>`}
+    if(s.bar){const bw=Math.max(2,(W-m.l-m.r)/((xb-xa)||1)*.55);s.d.forEach((v,i)=>{const yy=Y(Math.max(v,0)),hh=Math.abs(Y(v)-Y(0));g+=`<rect class="${s.mute!=null&&Math.abs(v)<s.mute?'mut':''}" x="${(X(x0+i)-bw/2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(hh,.8).toFixed(1)}" style="fill:${c}"/>`});return}
+    let p='',pen=false;s.d.forEach((v,i)=>{if(v==null||!isFinite(v)){pen=false;return}p+=(pen?'L':'M')+X(x0+i).toFixed(1)+' '+Y(v).toFixed(1);pen=true});
+    g+=`<path d="${p}" fill="none" style="stroke:${c};stroke-width:${s.w||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(s.dots)s.d.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${X(x0+i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" style="fill:${c}"/>`});
+  });
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.alt||'gráfico'}">${g}</svg>`;
+}
+function acfChart(el,r,n,o={}){const b=1.96/Math.sqrt(n);chart(el,{series:[{d:r,x0:1,bar:true,c:o.c||'var(--c1)',mute:o.noband?null:b}],hl:o.noband?[]:[{y:b},{y:-b}],y0:-1,y1:1,xl:'retardo k',h:o.h||190,w:o.w||520,alt:o.alt||'autocorrelación'})}
+function bind(ids,fn){const run=()=>{const v={};ids.forEach(id=>{const e=document.getElementById(id);v[id]=e.type==='checkbox'?e.checked:+e.value;const o=document.getElementById(id+'o');if(o)o.textContent=e.value});fn(v)};ids.forEach(id=>document.getElementById(id).addEventListener('input',run));run()}
+function seg(id,fn){const bs=[...document.getElementById(id).querySelectorAll('button')];const set=b=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));fn(b.dataset.v)};bs.forEach(b=>b.addEventListener('click',()=>set(b)));set(bs[0])}
+function initGloss(G){
+  const pop=document.createElement('div');pop.id='pop';pop.hidden=true;pop.setAttribute('role','dialog');document.body.appendChild(pop);let cur=null;
+  const close=()=>{pop.hidden=true;cur=null};
+  const open=b=>{const k=b.dataset.k,e=G[k];if(!e)return;if(cur===b){close();return}cur=b;
+    pop.innerHTML=`<button class="x" aria-label="Cerrar">×</button><h5>${e[0]}</h5><p>${e[1]}</p>`;pop.hidden=false;
+    const r=b.getBoundingClientRect(),sx=window.scrollX,sy=window.scrollY,pw=pop.offsetWidth;
+    let left=r.left+sx;left=Math.min(left,sx+document.documentElement.clientWidth-pw-16);left=Math.max(left,sx+16);
+    pop.style.left=left+'px';pop.style.top=(r.bottom+sy+8)+'px';pop.querySelector('.x').addEventListener('click',close)};
+  document.addEventListener('click',ev=>{const b=ev.target.closest('button.g');if(b){open(b);return}if(!ev.target.closest('#pop'))close()});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape')close()});
+}
+const GLOSS={
+prediccion:["Predicción puntual","Un único número como respuesta. Ej.: «mañana habrá 21 °C»."],
+intervalo:["Intervalo de predicción","Un rango en el que esperamos que caiga el valor futuro con cierta confianza (normalmente 95 %). Ej.: «entre 18 y 24 °C»."],
+densidad:["Predicción de densidad","Damos la probabilidad de cada valor posible, es decir, toda la distribución del futuro. Ej.: «10 % de que haga 18 °C, 25 % de que haga 20 °C…»."],
+horizonte:["Horizonte (h)","Cuántos periodos hacia delante predices. h = 1 es «el próximo dato», h = 5 es «dentro de cinco periodos»."],
+serie:["Serie temporal","Lista de valores de una misma magnitud medidos en momentos consecutivos y ordenados. Ej.: el precio del Brent cada día o el PIB de cada trimestre."],
+proceso:["Proceso estocástico","La «máquina» que genera los datos: una variable aleatoria para cada instante. Lo que observas (la serie) es una sola trayectoria que salió de esa máquina, como una de las muchas listas posibles de lanzar un dado 100 veces."],
+tendencia:["Tendencia","Movimiento de fondo a largo plazo: la serie sube o baja de forma sostenida. Ej.: los pasajeros de una aerolínea crecen año tras año."],
+ciclo:["Ciclo","Subidas y bajadas largas y NO regulares (su duración varía, normalmente más de un año). Ej.: expansión y recesión de la economía."],
+estacionalidad:["Estacionalidad","Patrón que se repite con un periodo fijo y conocido (año, semana, día). Ej.: los helados se venden más cada verano."],
+residuo:["Residuo (parte irregular)","Lo que queda de la serie cuando quitas tendencia y estacionalidad: la parte imprevisible."],
+estacionaria:["Serie estacionaria","Serie «estable»: oscila alrededor de un nivel fijo, con amplitud constante y con la misma relación entre un valor y los anteriores en cualquier momento. Una serie con tendencia no es estacionaria. Es el requisito para usar modelos AR y MA."],
+autocov:["Autocovarianza","Cuánto se mueven juntos el valor de hoy y el de hace k periodos. Si solo depende de k (la distancia) y no de la fecha, se cumple una condición de estacionariedad."],
+adf:["Test ADF (Dickey-Fuller aumentado)","Test que pregunta: «¿la serie vuelve a su nivel o deambula sin rumbo?». H0: la serie NO es estacionaria (tiene raíz unitaria). Si el p-valor es menor que 0,05 se rechaza H0 y concluimos que sí es estacionaria."],
+raizunit:["Raíz unitaria","Característica de las series que «deambulan»: un shock de hoy no se olvida nunca. Ej.: el paseo aleatorio. Estas series no son estacionarias y se arreglan diferenciando."],
+pvalor:["p-valor","Probabilidad de ver un resultado tan extremo como el tuyo si la hipótesis nula fuera cierta. Si es pequeño (menos de 0,05) desconfías de la hipótesis nula y la rechazas."],
+hipnula:["Hipótesis nula (H0)","La afirmación de partida que intentas rechazar con los datos. Ej.: «no hay autocorrelación» o «la serie no es estacionaria». Se rechaza solo si hay evidencia clara (p-valor pequeño)."],
+boxcox:["Transformación Box-Cox","Familia de transformaciones con un parámetro λ: (y^λ − 1)/λ, y log(y) cuando λ = 0. Sirve para que la variabilidad deje de crecer con el nivel de la serie."],
+retardo:["Operador retardo L","Es el botón «ayer»: L·y_t = y_(t−1). Aplicarlo dos veces (L²) lleva a dos periodos atrás."],
+diferencia:["Diferencia","Δy_t = y_t − y_(t−1): lo que ha cambiado la serie respecto al periodo anterior. Quita tendencias."],
+acf:["ACF (autocorrelación)","Correlación de la serie consigo misma k periodos atrás, para k = 1, 2, 3… Responde: «¿cuánto se parece hoy a hace k días?». Va de −1 a 1."],
+pacf:["PACF (autocorrelación parcial)","Correlación con hace k periodos una vez descontado el efecto de los retardos intermedios. Es la influencia «directa» del retardo k."],
+bandas:["Bandas de confianza del ACF","Las dos líneas horizontales en ±1,96/√T. Una barra que no las sobrepasa es compatible con autocorrelación cero (ruido)."],
+ljungbox:["Test de Ljung-Box","Mira de golpe las primeras m autocorrelaciones. H0: todas son cero (no hay autocorrelación). Un p-valor pequeño indica que sí hay patrón sin explicar."],
+ruidoblanco:["Ruido blanco","Serie sin ningún patrón: media cero, varianza constante y ningún valor se relaciona con los anteriores. Como tirar un dado: no hay nada que predecir."],
+gaussiano:["Gaussiano / normal","Que sigue la distribución normal, la campana de Gauss."],
+hetero:["Heterocedasticidad","Que la varianza cambia con el tiempo (rachas de mucha y poca volatilidad, típico de los mercados financieros). Se detecta con la autocorrelación de los cuadrados."],
+shapiro:["Test de Shapiro-Wilk","Test de normalidad. H0: los datos son normales. p-valor pequeño → no son normales."],
+ttest:["Test t de la media","H0: la media vale cero. p-valor pequeño → la media es distinta de cero."],
+mediamovil:["Media móvil","Para cada fecha, la media de los valores cercanos (una «ventana»). Alisa la serie: cuanto más ancha la ventana, más suave la curva."],
+aditivo:["Modelo aditivo","y = tendencia + estacionalidad + residuo. La oscilación estacional mide siempre lo mismo (±10 unidades, por ejemplo)."],
+multiplicativo:["Modelo multiplicativo","y = tendencia × estacionalidad × residuo. La oscilación estacional crece cuando crece el nivel (±10 % de lo que sea). Con logaritmos se vuelve aditivo."],
+deflactor:["Deflactor / ajuste por inflación","Dividir una serie en euros por un índice de precios para expresarla en euros constantes y poder comparar años distintos."],
+stl:["STL","Seasonal and Trend decomposition using Loess. Método de descomposición flexible que permite que la estacionalidad cambie lentamente y resiste valores atípicos."],
+loess:["LOESS","Alisado local: para cada punto ajusta una recta usando solo sus vecinos, dando más peso a los más cercanos."],
+ses:["Suavizado exponencial simple (SES)","Predicción = media ponderada del pasado donde los datos recientes pesan más y los antiguos pesan cada vez menos (de forma exponencial)."],
+alfa:["Parámetro α","Número entre 0 y 1 que decide cuánto caso haces al dato nuevo. α alto: te fías del último dato (reacciona rápido). α bajo: te fías de la historia (más suave)."],
+nivel:["Nivel (ℓ_t)","Tu mejor estimación de «dónde está» la serie ahora, quitando el ruido."],
+ets:["ETS","Error, Trend, Seasonal: familia de modelos de suavizado exponencial. Se describe con tres letras: tipo de error, de tendencia y de estacionalidad (N = ninguna, A = aditiva, M = multiplicativa)."],
+insample:["Dentro de muestra (in-sample)","Medir cómo se ajusta el modelo a los mismos datos con los que se ha estimado. Es optimista."],
+outsample:["Fuera de muestra (out-of-sample)","Medir el error con datos que el modelo no ha visto (los últimos datos reservados). Es la medida honesta de predicción."],
+mae:["MAE","Error absoluto medio: la media de |real − predicho|. Está en las mismas unidades que la serie."],
+mape:["MAPE","Error porcentual absoluto medio: la media de |real − predicho| / |real| × 100. Sirve para comparar series de distinta escala."],
+msfe:["MSFE","Error cuadrático medio de predicción: la media de (real − predicho)². Castiga mucho los errores grandes."],
+recursivo:["Esquema recursivo","Cada vez que reestimas, usas todo el pasado: la muestra de entrenamiento va creciendo."],
+rolling:["Esquema rolling (ventana móvil)","Cada vez que reestimas, usas una ventana de tamaño fijo que avanza y descarta lo más antiguo."],
+aic:["AIC","Criterio de información de Akaike. Premia el buen ajuste y penaliza tener muchos parámetros. Entre varios modelos, el AIC más bajo es el preferible."],
+parsimonia:["Parsimonia","Preferir el modelo más sencillo (menos parámetros) cuando predice casi igual de bien. Evita memorizar el ruido."],
+ar:["AR(p) autorregresivo","Modelo donde el valor de hoy depende de sus p valores anteriores más un shock: «hoy se parece a ayer»."],
+ma:["MA(q) media móvil","Modelo donde el valor de hoy depende de los shocks (sorpresas) de los últimos q periodos. Aquí «media móvil» no es el alisado de antes."],
+arma:["ARMA(p,q)","Mezcla de AR(p) y MA(q): el valor depende de sus valores pasados y de los shocks pasados. Solo para series estacionarias."],
+arima:["ARIMA(p,d,q)","ARMA aplicado a la serie diferenciada d veces. La «I» es de integrada: sirve para series con tendencia."],
+sarima:["SARIMA","ARIMA con parte estacional: además de mirar a ayer, mira a hace un año (o una semana) según el periodo s."],
+shock:["Shock / innovación (ε_t)","La sorpresa nueva de cada periodo: la parte que no se podía saber de antemano. Se modela como ruido blanco."],
+invertible:["Invertibilidad","Condición de un MA (|θ| < 1 en MA(1)) para poder reconstruir los shocks a partir de los datos. Garantiza una representación única."],
+boxjenkins:["Metodología Box-Jenkins","Receta en pasos: hacer estacionaria la serie → identificar p y q con ACF/PACF → estimar → diagnosticar residuos → predecir."],
+mle:["Máxima verosimilitud","Método de estimación: elige los parámetros que hacen más probable haber observado exactamente tus datos."],
+mediaincond:["Media condicional","La media del futuro sabiendo lo que ya ha pasado. Es la predicción puntual."],
+regresion:["Regresión lineal","Ajusta una recta que explica una variable (y) a partir de otra (x): y = α + βx + error. β dice cuánto cambia y cuando x sube una unidad."],
+mco:["Mínimos cuadrados (MCO)","Método que elige la recta que hace mínima la suma de los errores al cuadrado. Funciona bien si los errores son ruido blanco."],
+consistente:["Estimador consistente","Estimador que se acerca al valor verdadero a medida que tienes más datos."],
+cointegracion:["Cointegración","Dos series no estacionarias que se mueven juntas a largo plazo: su combinación (los residuos de la regresión) sí es estacionaria. Si los residuos no lo son, no hay equilibrio a largo plazo entre ellas."],
+r2:["Coeficiente de determinación R²","Porcentaje de la variación de y que explica la regresión. 83 % significa que el modelo recoge el 83 % de lo que se mueve y."],
+exogena:["Variable explicativa (exógena)","Otra serie, distinta de la que quieres predecir, que ayuda a explicarla. Ej.: la temperatura para predecir el consumo de electricidad."],
+swn:["Ruido blanco estricto (SWN)","Ruido blanco cuyos valores además son independientes entre sí (no solo incorrelados). Se comprueba mirando también los cuadrados de la serie."],
+gwn:["Ruido blanco gaussiano (GWN)","Ruido blanco estricto cuyos valores siguen una normal. Se comprueba con Shapiro-Wilk."],
+nolineal:["Modelo no lineal","Modelo para cuando la serie ya es ruido blanco (no hay estructura lineal) pero sus cuadrados sí tienen patrón, es decir, la varianza cambia con el tiempo."],
+desvest:["Varianza","Mide cuánto se aleja la serie de su media (la desviación típica es su raíz cuadrada)."]
+};
+
+initGloss(GLOSS);
+const CASES=[{"g": "Tema 1 · Caso", "name": "Serie 1", "sub": "200 datos", "raw": [2.538, 3.834, -0.259, 2.862, 2.319, 0.692, 1.566, 2.343, 5.578, 4.769, 0.65, 5.035, 2.725, 1.937, 2.715, 1.795, 1.876, 3.49, 3.409, 3.417, 2.671, 0.793, 2.717, 3.63, 2.489, 3.035, 2.727, 1.697, 2.294, 1.213, 2.888, 0.853, 0.931, 1.191, -0.944, 3.438, 2.325, 1.245, 3.37, 0.288, 1.898, 1.759, 2.319, 2.313, 1.135, 1.97, 1.835, 2.628, 3.093, 3.109, 1.136, 2.077, 0.786, 0.886, 1.993, 3.533, 1.23, 2.371, 1.774, 3.117, 0.911, 2.033, 2.553, 3.101, 3.544, 2.086, 0.508, 1.258, 0.938, 4.35, 1.384, 2.748, 1.808, 2.889, 1.235, 0.598, 0.578, 2.488, 1.823, 1.804, 3.419, 2.292, 2.198, 3.588, 1.196, 2.697, 2.835, 1.756, 2.216, 0.834, 0.852, 2.105, 2.722, 4.585, 1.333, 2.187, 1.918, 0.067, 1.561, 0.205, 2.84, 1.112, 2.1, 1.455, 2.304, 1.4, 2.49, 2.739, 3.712, 1.806, -0.138, 1.16, 3.355, 0.928, 2.961, 2.124, 3.437, 0.039, 1.802, 0.792, 4.908, 2.825, 3.379, 0.942, 1.531, 1.728, 3.098, 1.722, 2.702, -0.052, 1.646, 1.176, 0.423, 2.508, 2.282, 2.033, 0.666, 3.127, 2.35, 1.701, 2.023, 1.738, 0.25, 1.714, 1.169, 1.021, 0.844, 1.466, -0.003, 2.964, 2.52, 1.98, 1.965, 1.202, 3.019, 1.867, 1.285, 3.351, 1.775, 1.411, 1.706, 1.152, 0.88, 4.526, 3.655, 2.308, 0.743, 1.135, 1.823, 2.791, 0.668, -0.33, 0.551, 2.334, 2.391, 2.452, 1.87, 2.184, 1.524, 2.862, 0.638, 2.455, 1.151, 1.665, 2.553, 3.039, 0.882, 3.261, 2.66, 1.932, 1.805, 1.782, 1.697, 2.023, 2.051, 2.826, 3.527, 2.467, 1.79, 2.625], "trs": null, "trl": null, "p": {"adf0": 9.81926595182425e-26, "t": 9.990018356038954e-67, "lb": 0.2762865445089633, "lb2": 0.4446839285832871, "sh": 0.2793353591835434}, "tf": "none", "v": "Estacionaria, sin autocorrelación y normal, pero con media 2,03: no es ruido blanco solo por la media.", "a": "Restar la media. Sin modelo.", "m": null}, {"g": "Tema 1 · Caso", "name": "Serie 2", "sub": "200 datos", "raw": [0.296, 1.201, 1.09, -0.359, -0.13, 0.734, 0.12, 1.136, -0.687, 0.472, 0.288, 1.392, -1.346, 0.001, 0.053, -2.342, 1.248, 2.809, -0.232, 0.287, -0.465, 0.384, -0.38, -0.102, 1.618, -0.847, -0.576, -0.076, -0.132, 1.439, 2.031, -0.978, -0.641, 0.52, -0.381, 1.993, 1.636, 0.559, 0.564, -0.338, 0.764, 1.127, 0.142, 1.928, 0.671, -0.11, 0.371, 1.097, -0.398, -0.085, 2.373, -0.474, 0.946, 0.818, 1.589, 0.526, -2.465, -0.853, 0.512, 0.258, 1.962, 1.406, 0.497, 0.083, -1.548, 1.863, 0.134, -1.546, 0.433, 0.103, -0.57, 0.493, -0.708, -1.348, -1.754, -0.364, -0.627, 0.44, -1.503, -0.208, -1.505, 1.81, -0.117, 1.226, 0.495, 0.909, -1.154, 1.258, 1.453, -2.077, -0.176, -0.652, 0.157, -0.85, 0.279, 0.597, 0.245, -0.118, -1.289, 0.058, -0.521, -1.279, -0.056, -0.21, 0.192, 0.992, 0.576, 1.306, -0.729, -0.865, -0.095, 1.383, 1.304, -0.126, -0.597, -1.521, 0.672, 0.023, -1.178, -0.335, -1.829, 0.43, -0.174, 1.631, -1.359, 0.971, 0.144, 0.083, 0.717, 1.193, -1.071, 1.319, -1.21, -1.074, -0.673, 0.736, -1.07, 0.335, 0.412, 0.154, 0.555, -1.173, 1.008, 0.114, 0.73, -0.984, 0.052, 0.878, 1.014, -0.084, -1.854, -1.097, 0.219, 0.794, 0.463, -0.613, 2.244, 0.072, 0.866, -0.416, -1.115, 0.685, 1.038, 1.822, -0.529, -1.628, 1.617, 0.264, -1.127, -0.559, -0.809, 1.161, 0.592, 0.243, 0.24, -0.822, 0.993, 0.346, -0.261, -0.185, -0.102, -0.887, 0.741, 1.392, 2.474, 0.504, -0.822, 0.201, -1.007, -0.613, -0.659, -0.833, 0.378, -1.115, 0.667, 0.795, 1.037, -0.02, 0.619, 1.803], "trs": null, "trl": null, "p": {"adf0": 1.5064458329965403e-25, "t": 0.06438063358732012, "lb": 0.8088479746932168, "lb2": 0.4702625140714367, "sh": 0.9865887297190846}, "tf": "none", "v": "Ruido blanco gaussiano (el test de la media da p = 0,064, justo por encima de 0,05).", "a": "Sin modelo: no hay nada que predecir.", "m": null}, {"g": "Tema 1 · Caso", "name": "Serie 3", "sub": "200 datos", "raw": [-0.186, -0.185, 0.964, -1.249, -0.396, -1.397, -0.198, 0.95, 0.839, -1.572, -0.464, 0.276, -0.407, 0.237, 0.3, -0.701, -0.222, -4.33, 1.615, -0.479, -0.867, -0.194, -1.496, -0.029, -0.309, 3.061, 1.54, -1.644, 0.331, -1.551, -0.27, 1.015, 0.629, -0.259, 1.675, -0.814, 0.297, 1.461, 0.138, 0.701, 0.308, -0.82, -1.537, 1.716, -0.678, 0.062, 0.639, 0.12, -0.677, -0.8, -0.326, 1.201, -0.681, 0.611, 0.267, -0.579, -0.741, -0.251, -0.095, -3.774, 0.238, -0.949, -0.531, 0.659, -3.209, -0.903, 0.286, -1.995, 2.94, 1.862, 1.347, -0.332, 0.542, -0.567, 2.753, 1.48, 0.839, -0.719, 0.276, -0.416, -0.223, -1.382, -1.734, -0.813, -0.387, -2.079, 1.161, -0.129, 0.878, 0.599, 0.489, -1.354, -0.578, -0.333, 0.142, 1.383, -0.259, 3.739, 1.276, 1.632, 0.326, -0.615, -1.114, 0.147, 0.796, -0.287, -0.997, -0.231, -1.35, -0.646, -0.114, 0.124, -0.08, 0.342, 0.14, 2.612, 0.349, 1.715, -2.342, 0.286, -0.51, 0.921, 0.469, -9.942, -1.263, -1.319, 0.308, 1.193, -0.478, 0.701, 0.606, -3.166, 0.464, -0.612, 2.55, -0.078, 2.792, -0.916, 0.495, -0.062, -1.924, -3.108, 0.325, -0.164, -1.631, -0.594, 0.338, -1.522, 3.946, -0.644, 1.669, -2.045, 0.257, -2.501, -2.907, -0.886, 0.346, 0.848, 0.367, -0.323, 0.734, 0.582, 0.474, 0.667, 0.559, -1.286, 0.722, -1.092, -0.531, 1.108, -0.317, -0.143, 0.59, 2.012, -0.459, 0.605, -0.34, 0.335, 0.385, -1.728, 1.262, 0.46, 0.179, 1.552, -0.718, -0.591, -0.99, 0.864, 1.356, -0.076, 1.38, 0.268, 0.206, 0.228, 0.541, 0.184, 1.927, -1.459, -3.167, -1.565], "trs": null, "trl": null, "p": {"adf0": 3.8420941736371596e-11, "t": 0.38586870506297244, "lb": 0.2745597078852683, "lb2": 0.9979755952017486, "sh": 1.0591336811114468e-10}, "tf": "none", "v": "Ruido blanco y estricto, pero no normal (Shapiro p ≈ 0).", "a": "Sin modelo. Las colas son más pesadas que una normal.", "m": null}, {"g": "Tema 1 · Caso", "name": "Serie 4", "sub": "200 datos", "raw": [0.931, -0.707, -0.767, -2.581, -1.101, 0.592, 1.466, -0.175, -0.518, 0.893, 1.185, 0.806, 1.314, 0.951, 0.665, 1.692, -0.894, -2.442, -0.307, 0.127, -0.2, 0.196, -1.426, 0.126, -0.304, 1.122, 0.973, 0.788, -0.595, -0.7, -1.924, -1.908, -0.128, -1.185, 0.367, 1.52, 1.532, -0.853, 1.294, -0.16, -1.603, -1.471, -0.291, 0.386, 0.816, 0.09, 0.404, -0.042, 0.406, 0.033, -0.508, -0.302, 0.268, 1.851, 1.089, -0.778, -0.178, 0.311, 0.819, -0.344, -0.954, 0.394, -0.935, -0.528, 0.067, 0.957, 0.747, -0.954, -1.562, -0.057, -0.646, 0.114, 0.841, 1.023, 1.741, -0.588, 1.427, -0.363, -0.166, 0.1, 1.615, 1.106, 0.361, -1.447, -1.062, 0.842, 0.541, -1.316, 0.004, 0.64, 0.754, -1.859, -0.759, 0.083, -1.016, -1.142, -1.269, -2.463, -1.096, 0.811, -0.115, -0.435, 0.558, 1.861, 1.943, -0.644, -2.3, -0.146, 0.012, -1.039, 0.648, 0.67, -1.151, 0.661, 1.136, 0.131, 1.974, -0.734, -0.491, -0.077, 0.212, -1.698, -2.712, -2.304, -0.812, -0.222, 0.753, 1.952, -0.464, -0.232, 1.087, 0.134, -0.743, -1.178, 0.184, 1.273, -1.137, -0.237, 0.273, 0.751, -0.375, 2.442, 1.061, 0.635, -0.962, -0.369, 0.948, 0.718, -0.789, -0.271, 1.265, -1.529, -0.843, -0.176, -0.695, 0.603, 0.126, 1.593, 0.682, 1.479, -0.332, -0.05, 0.414, -1.033, -1.603, -2.224, 3.143, 1.223, 0.049, 0.704, 0.249, 0.323, -1.075, -0.661, -1.186, -0.317, -0.564, -0.953, -0.799, 0.675, 0.886, -0.139, 0.37, -0.242, -0.325, -0.702, -0.527, -1.688, -1.507, -1.559, -1.868, 0.063, 0.016, -1.902, -1.564, -1.454, 0.591, 0.768, 1.59, -0.421], "trs": null, "trl": null, "p": {"adf0": 8.715406413810707e-16, "t": 0.28608108258537024, "lb": 0.0006195497212829235, "lb2": 0.29099882154138057, "sh": 0.8850599939948174}, "tf": "none", "v": "Estacionaria pero correlada: Ljung-Box p = 0,0006. ACF y PACF muestran un pico en el retardo 1.", "a": "Modelo lineal de primer orden: MA(1) (mejor AIC, 574,3) o AR(1).", "m": "MA(1)"}, {"g": "Tema 1 · Caso", "name": "Serie 5", "sub": "200 datos", "raw": [-6.319, -6.384, -5.371, -5.33, -7.233, -7.272, -7.989, -8.854, -9.141, -9.824, -9.927, -8.487, -7.183, -5.533, -6.119, -5.781, -3.751, -3.14, -4.12, -3.327, -2.334, -2.679, -3.373, -2.971, -2.188, -1.707, -3.278, -3.521, -4.885, -6.102, -5.284, -5.393, -5.232, -5.79, -4.682, -5.528, -7.313, -6.833, -6.287, -6.261, -3.957, -3.895, -4.272, -4.099, -4.509, -3.311, -4.768, -5.834, -5.853, -6.41, -6.561, -6.503, -5.09, -4.32, -5.506, -6.464, -6.752, -4.615, -5.317, -5.77, -6.2, -6.355, -8.696, -7.825, -8.824, -7.671, -6.423, -8.202, -6.851, -7.923, -9.172, -9.46, -10.322, -12.011, -11.305, -10.456, -9.943, -10.312, -9.379, -8.907, -9.542, -8.834, -9.67, -10.9, -10.745, -10.351, -11.533, -9.746, -10.022, -9.086, -9.085, -11.041, -12.69, -11.444, -12.341, -9.857, -9.76, -8.696, -8.969, -9.641, -8.429, -9.19, -10.982, -12.468, -11.413, -11.672, -11.062, -10.483, -11.277, -11.058, -10.182, -10.207, -9.888, -9.903, -8.889, -9.858, -8.778, -9.693, -10.316, -10.154, -10.868, -10.313, -9.406, -7.745, -6.615, -5.795, -5.159, -4.725, -4.528, -3.702, -4.226, -4.068, -1.996, -1.305, -0.949, -0.757, 1.044, -1.378, -1.244, -1.723, -2.678, -4.065, -4.205, -4.362, -4.763, -4.331, -4.808, -4.838, -3.837, -4.949, -4.496, -4.899, -5.075, -4.553, -4.202, -3.849, -3.262, -2.706, -1.745, -2.024, -1.36, 0.337, -0.41, -0.261, 0.181, 2.067, 0.803, 2.155, 2.33, 1.633, 0.85, 0.238, -0.942, -1.263, -1.924, -0.307, 0.889, 0.88, 1.077, 1.521, 2.57, 3.367, 0.652, -0.671, -1.186, -0.285, 0.761, 0.007, 0.338, 0.041, 0.402, 1.625, 1.178, 3.206, 2.651, 2.151, 2.886, 2.314, 1.199, 0.652], "trs": [-0.065, 1.013, 0.041, -1.903, -0.039, -0.717, -0.865, -0.287, -0.683, -0.103, 1.44, 1.304, 1.65, -0.586, 0.338, 2.03, 0.611, -0.98, 0.793, 0.993, -0.345, -0.694, 0.402, 0.783, 0.481, -1.571, -0.243, -1.364, -1.217, 0.818, -0.109, 0.161, -0.558, 1.108, -0.846, -1.785, 0.48, 0.546, 0.026, 2.304, 0.062, -0.377, 0.173, -0.41, 1.198, -1.457, -1.066, -0.019, -0.557, -0.151, 0.058, 1.413, 0.77, -1.186, -0.958, -0.288, 2.137, -0.702, -0.453, -0.43, -0.155, -2.341, 0.871, -0.999, 1.153, 1.248, -1.779, 1.351, -1.072, -1.249, -0.288, -0.862, -1.689, 0.706, 0.849, 0.513, -0.369, 0.933, 0.472, -0.635, 0.708, -0.836, -1.23, 0.155, 0.394, -1.182, 1.787, -0.276, 0.936, 0.001, -1.956, -1.649, 1.246, -0.897, 2.484, 0.097, 1.064, -0.273, -0.672, 1.212, -0.761, -1.792, -1.486, 1.055, -0.259, 0.61, 0.579, -0.794, 0.219, 0.876, -0.025, 0.319, -0.015, 1.014, -0.969, 1.08, -0.915, -0.623, 0.162, -0.714, 0.555, 0.907, 1.661, 1.13, 0.82, 0.636, 0.434, 0.197, 0.826, -0.524, 0.158, 2.072, 0.691, 0.356, 0.192, 1.801, -2.422, 0.134, -0.479, -0.955, -1.387, -0.14, -0.157, -0.401, 0.432, -0.477, -0.03, 1.001, -1.112, 0.453, -0.403, -0.176, 0.522, 0.351, 0.353, 0.587, 0.556, 0.961, -0.279, 0.664, 1.697, -0.747, 0.149, 0.442, 1.886, -1.264, 1.352, 0.175, -0.697, -0.783, -0.612, -1.18, -0.321, -0.661, 1.617, 1.196, -0.009, 0.197, 0.444, 1.049, 0.797, -2.715, -1.323, -0.515, 0.901, 1.046, -0.754, 0.331, -0.297, 0.361, 1.223, -0.447, 2.028, -0.555, -0.5, 0.735, -0.572, -1.115, -0.547], "trl": "Δ", "p": {"adf0": 0.5826584311943771, "t": 0.6169564491119438, "lb": 0.9290638548345922, "lb2": 0.6314297617427123, "sh": 0.9375413038938647}, "tf": "d1", "v": "No estacionaria (ADF p = 0,58, media −5,23). Tras una diferencia sale ruido blanco gaussiano: es un paseo aleatorio.", "a": "Diferenciar una vez. Después no queda nada que modelar.", "m": "Paseo aleatorio"}, {"g": "Tema 1 · Caso", "name": "Serie 6", "sub": "2.000 datos", "raw": [0.955, -1.827, -1.438, 0.269, 0.781, 0.673, 1.267, 0.741, -0.776, -1.464, -0.029, 0.346, -0.133, -1.629, 0.126, 1.223, -2.022, -0.857, 1.288, -1.939, 0.681, -0.611, 0.289, 1.869, 0.878, -0.159, 0.441, -0.367, -0.062, 0.075, -0.435, -0.046, 0.773, 0.49, -0.357, -0.939, -0.361, -0.707, -0.607, 1.055, 0.057, -1.424, -1.482, 0.719, 0.202, 0.447, 1.311, -0.437, -0.213, -0.702, -1.011, -0.791, 0.342, 0.711, -0.403, -1.065, 0.538, -1.542, -0.589, -1.182, -0.673, -0.216, 1.376, 0.765, -0.388, 0.003, -1.16, -0.175, 0.101, -0.553, -0.255, 0.498, -0.952, 0.81, 1.314, -0.5, 0.192, -0.017, -0.135, -0.737, -0.298, 0.426, 0.473, -0.578, 0.078, 0.314, 0.763, 0.298, -1.169, -0.437, -0.459, -0.277, -0.274, 0.593, 0.048, 1.081, 0.268, -0.148, 0.468, -0.342, -0.291, -0.075, -0.689, -0.236, -0.507, -0.427, -0.278, -0.817, -0.284, 0.002, 0.789, 0.764, -0.15, -0.111, 0.639, 0.141, -0.604, -0.205, -0.171, -0.699, -0.139, 0.813, 0.444, 0.659, 0.048, 0.01, 0.57, -0.18, 0.161, -0.383, -0.931, -0.308, 0.098, 0.51, 0.07, -0.649, 0.41, 0.005, -0.323, -0.313, -0.585, 0.138, 0.303, 0.14, 0.312, 0.049, 0.034, -0.149, 0.668, -0.499, 0.223, 0.559, 0.379, 0.469, -0.028, -0.259, -0.017, 0.496, 0.311, -0.235, -0.917, 0.071, 0.921, 0.424, 0.965, 0.465, -0.941, -0.285, 0.182, -0.488, 0.033, -0.709, 0.246, 0.714, -0.647, 0.212, 0.328, -0.029, -0.123, -0.387, -0.082, -0.342, 0.172, -0.713, -0.917, 1.176, -0.355, -0.069, -0.148, -0.562, 0.969, 0.602, -0.278, 0.384, 0.449, -0.539, 0.882, 0.258, 0.616, 0.033, 0.338, -0.831, 0.824, -1.334, -1.164, 0.062, -0.665, 0.062, 0.615, 0.577, 0.299, 0.472, 0.525, 0.529, 0.483, 0.578, 0.408, 0.402, 0.101, 0.009, 0.038, -0.102, 1.148, 1.53, -0.509, 0.56, -0.371, -0.086, 0.478, 0.463, 0.811, -1.154, -1.307, 0.961, -0.155, 0.5, 1.2, -0.335, -0.391, -0.103, -0.252, 1.077, -0.713, -0.829, 0.17, -0.025, -0.429, -0.059, 0.934, -0.108], "trs": null, "trl": null, "p": {"adf0": 0.0, "t": 0.9860251942779497, "lb": 0.2868399923493018, "lb2": 1.4000358428715431e-105, "sh": 0.0003510879097892144}, "tf": "none", "v": "Ruido blanco (LB p = 0,29), pero los cuadrados tienen autocorrelación (p ≈ 0): la varianza cambia en el tiempo.", "a": "No hace falta modelo lineal. Se estudia un modelo no lineal para la varianza.", "m": "No lineal"}, {"g": "Tema 1 · Caso", "name": "Brent: precio", "sub": "2.797 datos diarios", "raw": [38.21, 43.88, 42.735, 49.63, 54.855, 54.5, 53.11, 49.38, 49.575, 56.945, 58.54, 57.63, 66.245, 66.105, 60.445, 59.3, 57.735, 54.64, 53.505, 58.04, 62.63, 62.61, 58.985, 62.29, 60.1, 67.0, 71.66, 69.02, 69.16, 69.85, 73.18, 73.915, 72.45, 65.43, 59.155, 57.7, 58.265, 58.88, 64.03, 61.705, 51.935, 54.835, 56.885, 61.19, 64.255, 68.85, 65.12, 69.825, 70.05, 72.48, 78.57, 76.205, 67.9, 75.05, 76.48, 82.7, 90.865, 94.295, 88.21, 96.02, 89.725, 88.82, 97.435, 109.09, 99.115, 111.265, 119.62, 128.94, 134.355, 144.22, 127.145, 112.26, 113.035, 90.835, 90.08, 66.32, 56.305, 49.875, 45.875, 48.635, 43.14, 44.455, 43.42, 48.035, 50.975, 48.98, 56.3, 67.72, 68.11, 58.59, 68.895, 70.625, 66.315, 64.895, 70.69, 74.965, 78.855, 75.815, 74.315, 76.89, 75.785, 77.14, 79.29, 79.645, 84.735, 78.245, 73.155, 75.76, 71.24, 77.675, 79.6, 75.345, 78.995, 83.62, 80.715, 87.895, 86.065, 91.405, 94.03, 96.08, 103.115, 114.495, 115.425, 126.415, 123.91, 111.03, 119.68, 107.14, 118.345, 113.58, 108.795, 115.035, 108.51, 112.86, 110.94, 107.72, 107.705, 106.51, 109.395, 116.675, 124.99, 126.615, 124.64, 116.275, 112.63, 103.535, 93.53, 99.96, 104.975, 113.765, 115.335, 108.995, 114.515, 108.845, 108.56, 111.335, 110.485, 110.31, 115.28, 117.51, 110.55, 106.905, 97.88, 104.715, 100.555, 103.14, 103.29, 109.69, 108.89, 111.485, 113.045, 107.445, 109.51, 105.505, 111.08, 109.0, 106.605, 110.2, 110.235, 108.525, 106.85, 106.59, 109.41, 109.81, 109.185, 113.135, 105.885, 106.54, 100.775, 101.195, 95.065, 88.805, 86.805, 76.955, 68.55, 58.995, 45.73, 52.265, 58.59, 55.83, 56.625, 61.775, 64.84, 61.755, 61.59, 61.51, 56.05, 47.685, 42.055, 45.94, 47.41, 45.94, 46.34, 43.56, 36.91, 36.14], "trs": [0.054, 0.02, 0.045, 0.015, 0.034, -0.037, -0.006, 0.053, 0.001, -0.013, -0.005, 0.003, -0.026, 0.041, -0.001, 0.007, 0.013, 0.006, -0.036, -0.025, 0.019, -0.021, -0.02, 0.011, -0.019, -0.001, 0.009, 0.015, 0.011, -0.007, 0.02, -0.01, 0.032, -0.01, 0.009, 0.036, 0.01, 0.028, 0.005, 0.006, 0.0, 0.016, 0.048, -0.019, -0.017, 0.032, 0.02, -0.014, -0.004, -0.007, 0.017, 0.022, 0.013, 0.003, -0.008, -0.0, -0.069, 0.016, -0.026, 0.002, -0.012, 0.044, 0.017, 0.03, -0.017, -0.001, -0.006, -0.043, -0.021, 0.013, -0.032, -0.003, -0.007, -0.009, 0.027, 0.026, 0.0, 0.029, 0.0, -0.025, -0.008, -0.024, 0.01, -0.037, 0.021, 0.004, -0.015, 0.015, -0.014, 0.024, -0.025, -0.048, -0.016, 0.017, 0.007, -0.004, -0.006, 0.004, 0.005, 0.001, 0.035, 0.01, -0.001, 0.001, 0.018, 0.019, 0.015, 0.001, -0.014, 0.007, -0.005, 0.011, -0.004, 0.03, 0.018, -0.005, 0.048, 0.002, -0.001, -0.016, 0.018, 0.0, 0.022, -0.015, -0.036, -0.002, 0.022, 0.007, 0.01, 0.015, -0.017, 0.025, -0.051, 0.048, -0.01, -0.027, 0.008, -0.012, 0.006, -0.005, -0.014, 0.024, 0.01, 0.017, -0.0, -0.006, 0.027, 0.015, -0.007, -0.003, 0.01, 0.003, 0.034, -0.005, 0.015, 0.038, 0.016, -0.013, -0.018, -0.028, -0.027, 0.041, 0.024, -0.01, -0.002, 0.012, 0.004, -0.003, 0.003, 0.011, 0.002, -0.016, -0.025, -0.005, -0.009, -0.032, 0.023, -0.037, 0.008, 0.009, 0.003, -0.022, 0.056, -0.015, 0.023, 0.001, -0.041, 0.003, 0.008, 0.004, -0.015, 0.002, -0.005, -0.039, -0.002, -0.034, 0.001, -0.012, 0.023, 0.032, 0.001, -0.025, 0.016, -0.015, -0.009, -0.018, -0.006, 0.017, 0.013, 0.027, -0.031, 0.021, -0.019, 0.005, 0.0, 0.014, 0.016, -0.042, -0.008, -0.014, -0.037, -0.007, -0.003, 0.004, -0.013, 0.0, -0.018, 0.009, 0.018, -0.005, -0.005, -0.006, 0.002, 0.004, -0.01, 0.008, 0.032, 0.016, -0.006, -0.004, 0.017, 0.017, 0.009, 0.019, 0.011, 0.007, -0.034, -0.04, 0.006, 0.0], "trl": "rendimiento", "p": {"adf0": 0.4873739076368573, "t": 0.9624374822735959, "lb": 0.01959967122826601, "lb2": 0.0, "sh": 2.4005127569746786e-26}, "tf": "ld1", "v": "El precio no es estacionario (ADF p = 0,49). Los rendimientos (log y diferencia) sí lo son, con media 0, autocorrelación muy débil (LB p = 0,02) y varianza que cambia (cuadrados p ≈ 0).", "a": "Trabajar con rendimientos. ARIMA aporta casi nada; lo relevante es la volatilidad (modelo no lineal).", "m": "No lineal"}, {"g": "Trabajo en grupo", "name": "Serie 1", "sub": "300 datos anuales", "raw": [0.837, 0.032, 0.488, 0.744, 0.197, -0.181, -0.116, -1.059, 1.173, 1.552, -1.208, -0.972, 0.6, -0.986, 1.968, -0.778, -0.824, -0.748, -1.341, 0.077, -1.572, 1.15, -0.156, 0.275, -0.965, -0.288, -0.328, -1.123, -0.156, 0.237, -0.158, 0.434, -0.59, 0.749, 1.437, 0.879, 1.08, -0.187, 0.852, -1.405, -0.619, -0.834, -0.407, 0.532, -0.838, 1.522, 2.509, 1.981, 0.128, 0.434, 1.934, 0.168, -0.241, -0.494, -0.429, 2.258, 0.066, 0.222, -1.237, 0.205, 1.947, 0.694, 0.928, -0.025, -1.535, -2.487, 0.715, -0.998, 0.423, 1.059, 0.704, 2.127, 0.879, -0.309, 0.659, 1.44, -4.818, -1.216, 1.132, -0.39, -2.398, 0.526, 0.232, 2.916, -0.3, 0.501, -1.256, -0.809, -1.125, 1.314, 0.134, -0.839, -1.49, 0.497, -1.515, 0.821, 0.151, -0.074, -1.383, -2.26, 0.3, -2.491, -0.038, -0.07, 0.027, 0.054, -1.087, -0.119, -0.192, 0.69, -0.394, -0.954, -1.688, -1.141, 1.215, -1.256, -0.429, -0.718, -0.448, -0.552, 0.618, -0.363, 1.03, -0.998, -0.266, 0.634, 1.558, 1.153, 1.417, -0.073, -1.072, 0.254, -1.37, 0.895, -1.116, 0.259, -0.298, 0.006, 2.074, 0.553, 0.073, 0.979, 0.498, 0.222, 0.558, -0.542, 0.167, -0.686, -1.646, -0.702, -0.675, 0.723, -0.371, 1.193, 0.761, -0.459, -1.49, -0.384, -1.107, 2.645, 0.887, -0.035, 2.944, 0.357, 0.918, -0.348, -0.454, -0.574, -2.392, -0.639, -0.599, -0.314, -0.535, 1.313, -0.573, -0.463, 1.924, -0.208, 0.102, 0.994, -0.281, 1.408, -0.181, 1.53, -1.292, -0.012, 0.641, -0.981, -1.094, 0.146, 0.244, -1.354, -1.57, 1.123, 0.621, 0.087, 0.465, 0.926, 0.553, 1.499, 0.617, -2.816, -0.623, 0.345, -0.647, -1.625, 1.082, 0.913, -0.863, -1.252, 2.477, 0.777, -0.199, -1.264, 1.035, 2.125, -0.649, 0.277, 0.885, -2.102, 0.743, 0.124, -0.341, 3.754, 0.736, 1.224, 1.668, 0.021, -1.412, 1.371, 0.157, 0.056, 2.372, 1.384, -0.661, 1.738, 0.405, 0.157, -0.271, 0.666, -3.314, -0.125, 0.496, -0.544, -2.027, 0.68, -1.299, -0.595, 0.147, -0.671], "trs": null, "trl": null, "p": {"adf0": 1.7393390174742348e-29, "t": 0.6422421828003876, "lb": 0.5345867722482956, "lb2": 0.8218911108942448, "sh": 0.019413536614919534}, "tf": "none", "v": "Ruido blanco y estricto. La normalidad se rechaza por poco (Shapiro p = 0,019).", "a": "Sin modelo.", "m": null}, {"g": "Trabajo en grupo", "name": "Serie 2", "sub": "300 datos anuales", "raw": [1.438, 1.059, -0.165, -1.268, -1.256, -0.669, -0.364, -0.744, -1.646, -0.843, 0.271, -0.68, -0.182, -0.082, -1.517, -1.462, -1.366, -0.227, -1.774, -2.092, -1.997, -1.494, -1.072, -0.469, 0.365, 0.396, 0.109, 1.344, 2.859, 2.906, 3.732, 5.079, 3.924, 4.878, 5.958, 6.627, 8.118, 8.623, 9.69, 9.174, 8.733, 8.369, 6.958, 6.087, 8.191, 8.663, 7.195, 7.158, 8.645, 7.652, 7.787, 7.577, 6.539, 6.378, 8.859, 10.292, 10.612, 9.202, 8.875, 9.125, 9.469, 9.264, 10.029, 10.153, 9.445, 9.221, 9.239, 10.375, 10.296, 9.081, 8.01, 10.905, 11.522, 11.336, 9.633, 9.084, 8.648, 8.11, 7.376, 7.428, 8.37, 8.282, 9.689, 8.147, 10.645, 9.389, 8.703, 9.234, 8.553, 5.809, 5.218, 3.884, 2.315, 3.132, 2.914, 3.578, 3.313, 3.71, 4.451, 5.277, 4.139, 4.179, 2.77, 2.08, 2.496, 0.231, -0.435, -0.274, 0.545, 0.924, 0.497, 0.143, -0.637, 0.347, -1.526, -3.323, -3.628, -4.824, -5.227, -3.575, -4.053, -3.906, -4.214, -6.154, -6.076, -5.681, -4.556, -3.835, -3.224, -2.275, -2.034, -2.209, -1.996, -3.182, -2.103, -2.743, -2.52, -3.204, -3.245, -3.738, -2.766, -2.737, -1.664, -0.632, -0.422, 0.346, -0.06, -0.408, 0.248, 0.105, 1.272, -0.327, -1.783, -1.457, -1.903, -0.684, -0.693, 1.432, 1.32, 1.488, 2.273, 2.507, 2.527, 5.388, 6.52, 6.043, 7.318, 6.71, 7.986, 7.577, 5.694, 5.279, 6.68, 6.068, 4.878, 5.932, 4.978, 5.747, 4.396, 4.78, 5.578, 4.502, 4.87, 4.433, 4.293, 4.947, 5.238, 4.414, 4.65, 4.653, 4.915, 5.002, 5.439, 3.784, 3.244, 4.385, 3.97, 3.171, 3.098, 3.001, 2.658, 2.201, 1.084, -0.965, -1.946, -2.858, -3.411, -1.913, -1.451, -1.521, -2.432, -3.517, -3.623, -2.83, -4.966, -4.753, -6.283, -7.087, -9.261, -8.766, -8.333, -7.63, -8.079, -7.015, -8.494, -9.379, -9.74, -9.844, -9.812, -9.397, -8.817, -8.908, -8.903, -7.143, -8.084, -8.329, -8.13, -8.233, -6.861, -7.349, -7.842, -8.785, -7.593, -7.325, -7.287, -6.03, -6.145, -7.39, -7.23, -7.42, -8.818, -8.654, -8.906, -9.701, -9.895, -9.726, -8.572, -8.027, -7.05, -7.395, -7.864, -7.692, -5.643, -6.759, -7.606, -7.734, -8.172, -8.552, -8.104, -7.618, -7.93, -7.906, -9.22, -9.03, -9.344, -10.012, -8.329, -6.728, -7.635, -8.905, -10.25, -10.943, -12.38, -11.472, -9.142, -8.902, -9.272, -7.738, -7.423, -8.331, -8.574, -8.383, -7.893, -7.466, -5.914, -5.969, -5.517, -4.52, -4.256, -6.332], "trs": [-0.379, -1.224, -1.103, 0.012, 0.587, 0.305, -0.38, -0.902, 0.803, 1.114, -0.951, 0.498, 0.1, -1.435, 0.055, 0.096, 1.139, -1.547, -0.318, 0.095, 0.503, 0.422, 0.603, 0.834, 0.031, -0.287, 1.235, 1.515, 0.047, 0.826, 1.347, -1.155, 0.954, 1.08, 0.669, 1.491, 0.505, 1.067, -0.516, -0.441, -0.364, -1.411, -0.871, 2.104, 0.472, -1.468, -0.037, 1.487, -0.993, 0.135, -0.21, -1.038, -0.161, 2.481, 1.433, 0.32, -1.41, -0.327, 0.25, 0.344, -0.205, 0.765, 0.124, -0.708, -0.224, 0.018, 1.136, -0.079, -1.215, -1.071, 2.895, 0.617, -0.186, -1.703, -0.549, -0.436, -0.538, -0.734, 0.052, 0.942, -0.088, 1.407, -1.542, 2.498, -1.256, -0.686, 0.531, -0.681, -2.744, -0.591, -1.334, -1.569, 0.817, -0.218, 0.664, -0.265, 0.397, 0.741, 0.826, -1.138, 0.04, -1.409, -0.69, 0.416, -2.265, -0.666, 0.161, 0.819, 0.379, -0.427, -0.354, -0.78, 0.984, -1.873, -1.797, -0.305, -1.196, -0.403, 1.652, -0.478, 0.147, -0.308, -1.94, 0.078, 0.395, 1.125, 0.721, 0.611, 0.949, 0.241, -0.175, 0.213, -1.186, 1.079, -0.64, 0.223, -0.684, -0.041, -0.493, 0.972, 0.029, 1.073, 1.032, 0.21, 0.768, -0.406, -0.348, 0.656, -0.143, 1.167, -1.599, -1.456, 0.326, -0.446, 1.219, -0.009, 2.125, -0.112, 0.168, 0.785, 0.234, 0.02, 2.861, 1.132, -0.477, 1.275, -0.608, 1.276, -0.409, -1.883, -0.415, 1.401, -0.612, -1.19, 1.054, -0.954, 0.769, -1.351, 0.384, 0.798, -1.076, 0.368, -0.437, -0.14, 0.654, 0.291, -0.824, 0.236, 0.003, 0.262, 0.087, 0.437, -1.655, -0.54, 1.141, -0.415, -0.799, -0.073, -0.097, -0.343, -0.457, -1.117, -2.049, -0.981, -0.912, -0.553, 1.498, 0.462, -0.07, -0.911, -1.085, -0.106, 0.793, -2.136, 0.213, -1.53, -0.804, -2.174, 0.495, 0.433, 0.703, -0.449, 1.064, -1.479, -0.885, -0.361, -0.104, 0.032, 0.415, 0.58, -0.091, 0.005, 1.76, -0.941, -0.245, 0.199, -0.103, 1.372, -0.488, -0.493, -0.943, 1.192, 0.268, 0.038, 1.257, -0.115, -1.245, 0.16, -0.19, -1.398], "trl": "Δ", "p": {"adf0": 0.6943058735064018, "t": 0.6408010459973907, "lb": 0.8996493102713401, "lb2": 0.9718234551126897, "sh": 0.6899610644210341}, "tf": "d1", "v": "No estacionaria (ADF p = 0,69). Su diferencia es ruido blanco gaussiano: paseo aleatorio.", "a": "Diferenciar una vez.", "m": "Paseo aleatorio"}, {"g": "Trabajo en grupo", "name": "Serie 3", "sub": "300 datos anuales", "raw": [-1.629, -1.175, 0.455, 2.141, 2.119, -0.323, -2.178, -4.479, -4.914, -6.34, -6.76, -6.842, -6.995, -7.832, -9.06, -10.225, -10.724, -10.933, -12.017, -12.297, -13.383, -14.79, -17.52, -20.642, -22.886, -23.43, -22.599, -22.445, -21.435, -21.265, -19.623, -19.07, -17.544, -16.35, -14.712, -13.797, -13.385, -13.779, -14.061, -11.143, -11.492, -12.454, -13.3, -12.772, -12.623, -11.252, -9.845, -8.041, -5.917, -5.597, -5.198, -5.776, -5.877, -5.535, -5.778, -6.229, -5.99, -5.587, -6.495, -6.592, -6.873, -7.868, -8.333, -6.308, -3.825, -3.635, -4.832, -5.753, -6.632, -5.789, -4.821, -2.244, -0.798, 0.742, 0.974, -0.016, -1.858, -3.024, -5.663, -7.126, -8.283, -8.939, -9.992, -10.951, -12.668, -14.164, -14.963, -15.614, -15.0, -13.549, -13.076, -13.494, -13.496, -15.833, -16.65, -18.51, -18.707, -18.375, -17.451, -17.508, -17.363, -19.358, -18.873, -20.369, -20.465, -21.908, -24.081, -24.884, -25.569, -26.726, -28.909, -30.661, -29.593, -28.797, -27.528, -27.837, -29.396, -30.517, -29.633, -29.73, -30.198, -30.321, -28.993, -27.043, -27.7, -27.746, -28.098, -27.584, -27.41, -28.52, -28.547, -29.016, -29.37, -29.038, -28.531, -29.554, -30.101, -31.74, -32.913, -34.536, -34.765, -34.543, -32.68, -31.67, -30.312, -30.072, -28.784, -27.573, -26.444, -26.659, -25.609, -25.478, -25.619, -26.505, -27.149, -29.062, -29.241, -30.788, -31.776, -31.448, -29.088, -27.6, -26.924, -26.64, -26.785, -25.699, -24.058, -22.014, -21.223, -21.325, -22.471, -23.342, -24.365, -24.531, -23.969, -21.914, -21.262, -20.954, -21.54, -19.407, -17.227, -15.837, -14.521, -14.012, -14.227, -14.037, -14.669, -14.873, -16.682, -17.524, -19.68, -21.211, -20.0, -18.155, -18.329, -20.357, -21.987, -22.102, -23.048, -21.543, -19.424, -17.978, -16.124, -14.784, -14.099, -14.878, -14.698, -16.097, -18.31, -20.306, -20.744, -20.513, -19.438, -19.683, -20.347, -22.16, -23.562, -25.842, -25.879, -25.762, -25.193, -25.326, -25.177, -25.284, -26.994, -28.681, -30.406, -31.08, -31.115, -30.044, -29.701, -28.923, -28.139, -26.168, -26.121, -27.561, -29.62, -31.799, -31.085, -30.194, -28.679, -28.692, -28.552, -29.028, -27.941, -28.523, -29.117, -30.926, -31.06, -30.897, -30.63, -31.292, -31.876, -31.798, -30.251, -30.138, -29.236, -28.441, -27.44, -29.18, -29.797, -30.236, -31.184, -31.096, -33.297, -34.105, -36.323, -36.951, -37.134, -37.935, -38.102, -38.017, -38.089, -37.51, -37.891, -37.519, -37.725, -37.368, -37.531, -36.895, -36.546, -35.818, -34.718, -33.718, -31.363, -29.509, -30.96, -30.898, -31.061, -31.301, -32.502, -34.603, -36.067, -37.578, -38.431, -39.065, -40.498, -41.922, -42.2, -41.65], "trs": [0.454, 1.63, 1.686, -0.022, -2.442, -1.855, -2.301, -0.435, -1.426, -0.42, -0.082, -0.153, -0.837, -1.228, -1.165, -0.499, -0.209, -1.084, -0.28, -1.086, -1.407, -2.73, -3.122, -2.244, -0.544, 0.831, 0.154, 1.01, 0.17, 1.642, 0.553, 1.526, 1.194, 1.638, 0.915, 0.412, -0.394, -0.282, 2.918, -0.349, -0.962, -0.846, 0.528, 0.149, 1.371, 1.407, 1.804, 2.124, 0.32, 0.399, -0.578, -0.101, 0.342, -0.243, -0.451, 0.239, 0.403, -0.908, -0.097, -0.281, -0.995, -0.465, 2.025, 2.483, 0.19, -1.197, -0.921, -0.879, 0.843, 0.968, 2.577, 1.446, 1.54, 0.232, -0.99, -1.842, -1.166, -2.639, -1.463, -1.157, -0.656, -1.053, -0.959, -1.717, -1.496, -0.799, -0.651, 0.614, 1.451, 0.473, -0.418, -0.002, -2.337, -0.817, -1.86, -0.197, 0.332, 0.924, -0.057, 0.145, -1.995, 0.485, -1.496, -0.096, -1.443, -2.173, -0.803, -0.685, -1.157, -2.183, -1.752, 1.068, 0.796, 1.269, -0.309, -1.559, -1.121, 0.884, -0.097, -0.468, -0.123, 1.328, 1.95, -0.657, -0.046, -0.352, 0.514, 0.174, -1.11, -0.027, -0.469, -0.354, 0.332, 0.507, -1.023, -0.547, -1.639, -1.173, -1.623, -0.229, 0.222, 1.863, 1.01, 1.358, 0.24, 1.288, 1.211, 1.129, -0.215, 1.05, 0.131, -0.141, -0.886, -0.644, -1.913, -0.179, -1.547, -0.988, 0.328, 2.36, 1.488, 0.676, 0.284, -0.145, 1.086, 1.641, 2.044, 0.791, -0.102, -1.146, -0.871, -1.023, -0.166, 0.562, 2.055, 0.652, 0.308, -0.586, 2.133, 2.18, 1.39, 1.316, 0.509, -0.215, 0.19, -0.632, -0.204, -1.809, -0.842, -2.156, -1.531, 1.211, 1.845, -0.174, -2.028, -1.63, -0.115, -0.946, 1.505, 2.119, 1.446, 1.854, 1.34, 0.685, -0.779, 0.18, -1.399, -2.213, -1.996, -0.438, 0.231, 1.075, -0.245, -0.664, -1.813, -1.402, -2.28, -0.037, 0.117, 0.569, -0.133, 0.149, -0.107, -1.71, -1.687, -1.725, -0.674, -0.035, 1.071, 0.343, 0.778, 0.784, 1.971, 0.047, -1.44, -2.059, -2.179, 0.714, 0.891, 1.515, -0.013, 0.14, -0.476, 1.087, -0.582, -0.594, -1.809, -0.134, 0.163, 0.267], "trl": "Δ", "p": {"adf0": 0.30603835849302674, "t": 0.049283686199381394, "lb": 1.109368712716198e-21, "lb2": 0.0004868197046685556, "sh": 0.2178280601079549}, "tf": "d1", "v": "No estacionaria (media −21,7). Su diferencia es estacionaria pero correlada: ACF con picos en los retardos 1 y 2.", "a": "ARIMA(0,1,2): una diferencia y un MA(2) (AIC 821,2, residuos LB p = 0,62).", "m": "ARIMA(0,1,2)"}, {"g": "Trabajo en grupo", "name": "Serie 4", "sub": "300 datos anuales", "raw": [0.916, -0.394, -2.384, -3.112, -4.593, -6.848, -12.048, -18.241, -26.297, -34.95, -44.133, -53.541, -63.876, -74.028, -84.102, -94.023, -104.333, -115.826, -128.563, -141.839, -154.98, -167.462, -180.292, -192.672, -206.522, -221.332, -238.401, -258.238, -279.512, -301.042, -322.125, -344.6, -366.378, -387.751, -407.114, -425.327, -442.212, -457.116, -469.91, -482.464, -494.58, -505.135, -513.305, -519.788, -524.187, -525.975, -527.187, -527.132, -524.724, -520.636, -513.78, -504.635, -492.628, -479.661, -465.367, -449.358, -430.938, -409.799, -387.555, -364.148, -340.674, -317.197, -295.045, -274.403, -255.103, -235.676, -214.556, -193.653, -173.687, -153.94, -133.974, -116.292, -100.209, -84.655, -69.658, -54.01, -37.521, -20.215, -2.894, 14.203, 30.843, 47.357, 65.113, 83.746, 103.015, 123.512, 144.162, 165.75, 188.27, 211.685, 235.822, 262.329, 289.568, 314.954, 338.425, 360.329, 382.23, 402.298, 421.58, 442.258, 464.195, 486.244, 508.238, 528.091, 546.822, 565.451, 585.279, 606.523, 629.46, 654.717, 682.028, 709.139, 734.696, 758.89, 782.426, 805.777, 828.008, 849.418, 869.791, 890.547, 910.249, 929.213, 946.481, 962.342, 978.529, 997.126, 1017.016, 1038.291, 1059.993, 1081.14, 1101.303, 1121.353, 1142.429, 1165.274, 1188.912, 1211.815, 1231.803, 1248.579, 1264.473, 1277.902, 1290.053, 1302.038, 1313.55, 1325.814, 1339.576, 1354.925, 1372.321, 1390.219, 1409.901, 1430.515, 1451.603, 1473.945, 1497.43, 1522.309, 1548.398, 1575.782, 1602.489, 1627.576, 1649.307, 1668.934, 1687.248, 1704.752, 1720.033, 1733.546, 1746.352, 1761.535, 1778.068, 1795.335, 1814.118, 1834.649, 1855.717, 1876.479, 1898.376, 1921.52, 1944.059, 1966.369, 1987.285, 2005.798, 2022.771, 2038.294, 2052.887, 2065.742, 2076.321, 2086.409, 2096.244, 2106.715, 2119.369, 2133.322, 2145.751, 2158.362, 2170.921, 2182.133, 2191.445, 2199.804, 2207.903, 2213.786, 2218.684, 2223.038, 2225.841, 2227.749, 2229.005, 2230.5, 2231.145, 2229.537, 2225.843, 2219.833, 2212.516, 2204.517, 2195.234, 2184.742, 2174.134, 2164.009, 2154.302, 2145.0, 2135.296, 2125.737, 2115.794, 2107.166, 2100.291, 2094.811, 2091.095, 2090.231, 2089.812, 2090.116, 2091.762, 2093.73, 2096.12, 2099.285, 2103.834, 2109.843, 2117.06, 2126.629, 2139.079, 2153.658, 2170.09, 2187.162, 2203.14, 2218.614, 2234.23, 2250.242, 2266.606, 2283.991, 2304.613, 2326.919, 2349.641, 2373.652, 2398.479, 2422.274, 2443.456, 2463.503, 2483.041, 2500.471, 2515.662, 2528.259, 2539.573, 2549.181, 2556.424, 2562.054, 2567.449, 2573.225, 2578.335, 2583.053, 2587.592, 2591.314, 2595.096, 2599.859, 2605.16, 2611.124, 2617.278, 2623.244, 2628.948, 2636.264, 2645.4, 2655.044, 2664.438, 2672.237, 2679.18, 2686.306, 2693.886, 2703.278, 2716.158, 2732.503, 2751.672, 2774.111, 2799.5, 2830.146, 2861.683, 2892.877, 2923.946, 2957.745, 2992.799, 3029.033, 3065.982, 3104.024, 3143.719, 3184.633, 3225.207, 3264.825, 3303.696, 3340.763], "trs": [-0.68, 1.262, -0.753, -0.774, -2.945, -0.993, -1.863, -0.597, -0.53, -0.225, -0.927, 0.183, 0.078, 0.153, -0.389, -1.183, -1.244, -0.539, 0.135, 0.659, -0.348, 0.45, -1.47, -0.96, -2.259, -2.768, -1.437, -0.256, 0.447, -1.392, 0.697, 0.405, 2.01, 1.15, 1.328, 1.981, 2.11, 0.24, 0.438, 1.561, 2.385, 1.687, 2.084, 2.611, 0.576, 1.267, 2.353, 1.68, 2.768, 2.289, 2.862, 0.96, 1.327, 1.715, 2.411, 2.719, 1.105, 1.163, 0.067, 0.003, -1.325, -1.51, -1.342, 0.127, 1.693, -0.217, -0.937, -0.219, 0.219, -2.284, -1.599, -0.529, -0.557, 0.651, 0.841, 0.817, 0.015, -0.224, -0.457, -0.126, 1.242, 0.877, 0.636, 1.228, 0.153, 0.938, 0.932, 0.895, 0.722, 2.37, 0.732, -1.853, -1.915, -1.567, -0.003, -1.833, -0.786, 1.396, 1.259, 0.112, -0.055, -2.141, -1.122, -0.102, 1.199, 1.416, 1.693, 2.32, 2.054, -0.2, -1.554, -1.363, -0.658, -0.185, -1.12, -0.821, -1.037, 0.383, -1.054, -0.738, -1.696, -1.407, 0.326, 2.41, 1.293, 1.385, 0.427, -0.555, -0.984, -0.113, 1.026, 1.769, 0.793, -0.735, -2.915, -3.212, -0.882, -2.465, -1.278, -0.166, -0.473, 0.752, 1.498, 1.587, 2.047, 0.502, 1.784, 0.932, 0.474, 1.254, 1.143, 1.394, 1.21, 1.295, -0.677, -1.62, -3.356, -2.104, -1.313, -0.81, -2.223, -1.768, -0.707, 2.377, 1.35, 0.734, 1.516, 1.748, 0.537, -0.306, 1.135, 1.247, -0.605, -0.229, -1.394, -2.403, -1.54, -1.45, -0.93, -1.738, -2.276, -0.491, -0.253, 0.636, 2.183, 1.299, -1.524, 0.182, -0.052, -1.347, -1.9, -0.953, -0.26, -2.216, -0.985, -0.544, -1.551, -0.895, -0.652, 0.239, -0.85, -2.253, -2.086, -2.316, -1.307, -0.682, -1.284, -1.209, -0.116, 0.483, 0.418, 0.405, -0.402, 0.145, -0.384, 1.315, 1.753, 1.395, 1.764, 2.852, 0.445, 0.723, 1.342, 0.322, 0.422, 0.775, 1.384, 1.46, 1.208, 2.352, 2.881, 2.129, 1.853, 0.64, -1.094, -0.504, 0.142, 0.396, 0.352, 1.021, 3.237, 1.684, 0.416, 1.289, 0.816, -1.032, -2.613, -1.135, -0.509, -2.108], "trl": "Δ²", "p": {"adf0": 0.9682650157194864, "t": 0.12516040114501034, "lb": 2.311396167415692e-51, "lb2": 6.561677380000222e-08, "sh": 0.3415960460300705}, "tf": "d2", "v": "Crece sin parar. Con una diferencia sigue sin ser estacionaria (ADF p = 0,25); con dos sí. No admite logaritmo (hay valores negativos).", "a": "ARIMA(1,2,0): dos diferencias y un AR(1) (AIC 864,7, residuos LB p = 0,74).", "m": "ARIMA(1,2,0)"}, {"g": "Trabajo en grupo", "name": "Serie 5", "sub": "2.000 datos diarios", "raw": [-0.138, -0.486, -0.924, -1.757, -0.199, 0.953, -0.73, -0.116, -0.698, 0.183, -1.275, -0.746, 0.145, -1.531, -1.031, -0.016, 1.003, 0.144, -0.009, -0.17, 0.431, 0.22, -0.175, -0.554, 0.374, 1.037, 0.825, 0.104, 0.164, -0.96, 0.011, -0.425, 0.298, 0.557, 0.063, -0.901, -0.119, 0.119, -0.129, 0.352, 0.277, 0.409, -0.582, -0.02, 0.391, -0.261, -0.011, 0.512, 0.279, 0.504, -0.232, 0.08, 0.74, -0.523, -0.306, 0.03, 0.013, 0.403, 0.032, 0.662, -0.517, -0.08, 0.105, 0.792, 0.147, -0.014, -0.558, 0.306, -0.114, 0.389, -0.421, -0.122, 0.172, 0.436, -0.353, -0.015, 0.814, 0.847, 0.551, 0.154, 0.443, 0.422, 0.258, -0.279, 0.539, -0.107, -0.357, 0.642, -0.025, -0.171, -0.551, -0.514, -0.233, 0.88, 0.966, -0.267, 0.006, -0.468, -0.143, -0.446, -0.729, 0.804, 0.426, -0.427, -1.145, -0.738, -0.762, 0.229, 0.508, 0.783, 0.319, 0.009, -0.824, 0.315, -1.36, -1.068, -0.55, -0.314, -0.43, 0.498, 0.171, -0.033, -0.352, 0.045, -0.343, 0.522, 0.573, 0.097, -0.04, 0.034, -0.777, 0.523, -0.489, -0.151, -0.262, -0.154, 0.337, -0.072, 0.209, 0.46, -0.654, 0.215, -0.302, 0.073, 0.019, -0.246, -0.08, -0.176, -0.433, -0.116, 0.477, -0.701, 0.424, 0.049, 0.006, -0.177, 0.475, 0.196, -0.18, 0.22, -0.006, -0.016, 0.343, 0.16, -0.32, 0.032, -0.484, -0.302, 0.399, -0.307, 0.597, -0.101, 0.355, -0.058, 0.324, 0.097, -0.148, -0.574, -0.089, -1.2, -0.416, -0.237, -0.225, 0.63, 0.365, 0.179, 0.119, -1.154, 0.78, -0.161, -0.242, -0.359, 0.649, -0.189, 0.607, 0.171, 0.227, -0.031, -0.292, 0.129, -0.185, 0.146, 0.338, 0.216, -0.055, -0.394, -0.053, 0.811, 0.062, -0.579, -0.143, 0.536, 1.179, -0.118, -0.347, 0.071, -0.242, 0.084, -0.205, -0.616, 0.072, -0.052, -0.784, -0.117, 0.506, -0.632, 0.138, 0.295, 0.451, 0.713, 0.284, -0.161, 0.322, 0.396, 0.245, -0.391, -0.088, 0.066, 0.105, 0.098, -0.633, 0.119, -0.306, 0.315, -0.018, -1.094, -0.133, -0.571, -0.326, 0.503], "trs": null, "trl": null, "p": {"adf0": 0.0, "t": 0.6369390004065766, "lb": 0.032479278938162194, "lb2": 2.9160370796339196e-212, "sh": 3.4559866945040765e-10}, "tf": "none", "v": "Estacionaria con media 0. Autocorrelación casi inexistente (LB p = 0,03, un solo pico en el retardo 5); los cuadrados sí tienen estructura.", "a": "Prácticamente ruido blanco. Interesa la varianza (modelo no lineal).", "m": "No lineal"}, {"g": "Trabajo en grupo", "name": "Serie 6", "sub": "3.000 datos diarios", "raw": [-0.234, -0.286, 0.468, -1.865, -0.911, -1.218, -0.129, 0.847, 0.549, 0.824, 0.555, 0.407, -0.359, -0.744, -0.877, -0.508, -0.907, -0.357, -0.026, -0.481, 0.612, -0.566, -0.491, 0.063, -0.1, 0.543, 0.932, -0.627, 0.093, -0.878, -0.137, -0.05, -0.592, -0.276, 0.128, -0.228, -0.349, -0.688, -0.104, -0.247, 0.043, -0.386, 0.411, 0.317, 0.216, 0.681, 0.52, 0.266, 0.542, 0.291, 0.295, 0.575, 0.802, 0.248, 0.721, -0.586, -0.632, 0.046, 0.331, 0.246, 1.127, 1.255, 0.368, 1.166, 0.477, 0.16, -0.675, -1.292, -1.008, -0.635, 0.803, 1.033, 0.247, -0.733, -0.905, 0.429, 1.233, 0.247, 0.241, 0.054, 0.477, 0.767, 0.212, -0.397, 0.347, 0.013, 0.538, 0.332, 0.18, 0.128, -0.023, 0.479, -0.06, -0.195, 0.207, -0.541, -0.074, -0.234, -0.619, -0.195, 0.108, 0.222, 0.652, 0.417, 0.025, -0.138, -0.139, 0.311, 0.083, -0.101, 0.215, 0.384, -0.492, -0.515, 0.1, 0.273, 0.197, -0.078, -0.006, -0.585, -0.568, 0.025, 0.69, 0.58, 0.371, -0.417, -0.498, 0.145, 0.532, 0.291, 0.477, -0.699, -0.405, -0.502, -0.158, 0.376, 0.004, -0.581, -0.742, -0.358, -0.293, -0.389, 0.485, 0.855, -0.609, 0.069, -0.662, -0.779, -0.163, 1.352, 0.365, -0.186, -0.513, -0.016, -0.171, -0.515, -0.206, 0.659, -0.112, -0.306, -0.848, -1.189, -0.276, 0.341, -0.34, 0.383, -0.643, 0.429, 0.975, 0.235, -0.443, 0.131, -0.116, 0.186, -0.373, 0.439, -0.237, 0.067, 0.939, 0.061, 0.181, 1.401, 0.622, 0.542, 0.453, -0.344, -0.193, 0.118, -0.435, -0.581, 0.156, -0.741, -0.961, 0.262, -0.383, -0.431, -0.048, 0.217, 0.76, -0.066, 0.179, 0.463, 0.157, 0.372, -0.16, 0.447, -0.722, 0.042, 0.281, 0.401, -0.101, -0.691, -0.81, -0.964, -0.205, 0.342, 0.422, -0.381, 0.117, 0.213, -0.133, 0.031, -0.436, -0.041, 0.25, -0.043, 0.136, 0.171, 0.04, 0.476, 0.702, -0.307, -0.192, 0.141, -0.326, -0.648, -1.252, -0.402, 0.839, 0.719, 1.14, 0.558, 1.429, 0.558, 1.502, 1.0, -0.637, -0.388, 0.37, -0.518], "trs": null, "trl": null, "p": {"adf0": 0.0, "t": 0.5871371262959225, "lb": 3.654509035280331e-101, "lb2": 0.0, "sh": 2.7720085744373815e-18}, "tf": "none", "v": "Estacionaria con media 0 y correlada: ACF y PACF con pico 0,38 en el retardo 1. Los cuadrados también tienen estructura.", "a": "AR(1) para la parte lineal, y después modelo no lineal para la varianza.", "m": "AR(1)"}, {"g": "Trabajo individual", "name": "Serie individual", "sub": "3.000 datos diarios", "raw": [9.087, 7.031, 5.784, 5.436, 8.49, 8.625, 11.053, 11.039, 10.314, 11.177, 10.304, 8.335, 9.353, 8.799, 10.264, 8.89, 10.105, 12.411, 12.797, 11.526, 11.475, 9.824, 15.999, 16.103, 17.194, 14.434, 13.506, 17.046, 18.237, 18.529, 18.479, 20.325, 17.17, 27.718, 27.067, 21.99, 24.113, 25.572, 28.39, 30.879, 29.741, 29.046, 27.933, 29.189, 29.488, 23.435, 26.393, 22.001, 22.964, 21.942, 20.93, 21.042, 22.307, 20.234, 15.605, 13.335, 16.554, 15.145, 12.745, 13.274, 11.684, 8.424, 1.145, -4.946, -8.638, -5.835, -2.107, 0.334, -2.497, -1.35, -3.457, -2.143, -0.514, -3.077, -2.261, -0.034, 4.519, 0.917, 3.597, -3.699, -2.335, -3.255, -4.183, -5.326, -6.084, -4.198, -1.487, -2.911, -2.793, -5.361, -4.066, -4.91, -8.322, -6.435, -5.966, -9.364, -7.175, -7.855, -10.292, -9.011, -8.044, -7.808, -5.683, -3.358, -0.917, -0.071, 1.988, -0.284, -1.782, 5.416, 4.819, 3.137, 2.623, 3.451, 3.809, 6.48, 5.552, 3.219, -0.422, 0.78, 3.731, 6.352, 7.853, 5.524, 7.092, 6.017, 6.997, 9.393, 11.833, 12.249, 10.089, 8.333, 10.579, 9.616, 12.637, 10.557, 9.709, 10.5, 9.138, 11.732, 9.076, 7.909, 3.961, 7.775, 7.688, 7.544, 8.871, 6.656, 7.318, 8.153, 6.434, 7.519, 8.765, 16.077, 18.205, 17.9, 18.827, 17.435, 19.442, 19.928, 19.091, 21.672, 21.138, 20.708, 20.016, 20.203, 20.375, 19.893, 18.67, 18.551, 21.692, 23.142, 20.635, 22.494, 21.615, 22.332, 24.711, 23.285, 19.176, 13.504, 15.057, 19.948, 22.359, 20.759, 20.828, 21.586, 19.287, 19.461, 20.241, 21.71, 21.588, 21.92, 21.034, 18.939, 19.485, 21.499, 25.015, 23.974, 26.018, 24.054], "trs": [-0.192, 0.583, -2.052, -0.165, -0.853, 0.358, 0.898, 0.21, 0.605, 0.225, 0.185, -0.521, -0.601, -0.579, -0.157, -0.703, 0.005, 0.117, -0.471, 0.805, -0.811, -0.264, 0.26, -0.126, 0.583, 0.715, -1.0, 0.344, -0.915, 0.214, 0.005, -0.572, -0.039, 0.238, -0.28, -0.257, -0.548, 0.17, -0.205, 0.142, -0.403, 0.565, 0.153, 0.089, 0.594, 0.248, 0.058, 0.436, 0.073, 0.179, 0.457, 0.572, -0.073, 0.622, -0.874, -0.398, 0.299, 0.313, 0.113, 1.029, 0.805, -0.135, 1.019, 0.01, -0.03, -0.739, -1.022, -0.492, -0.232, 1.058, 0.711, -0.166, -0.832, -0.611, 0.791, 1.061, -0.246, 0.142, -0.042, 0.455, 0.576, -0.094, -0.482, 0.505, -0.125, 0.532, 0.117, 0.047, 0.057, -0.075, 0.488, -0.251, -0.172, 0.285, -0.624, 0.143, -0.205, -0.525, 0.052, 0.186, 0.18, 0.563, 0.156, -0.142, -0.148, -0.083, 0.366, -0.041, -0.135, 0.256, 0.298, -0.646, -0.318, 0.306, 0.233, 0.087, -0.156, 0.025, -0.583, -0.334, 0.252, 0.68, 0.304, 0.139, -0.565, -0.331, 0.344, 0.474, 0.078, 0.361, -0.89, -0.125, -0.34, 0.042, 0.44, -0.147, -0.582, -0.51, -0.062, -0.15, -0.272, 0.641, 0.661, -0.951, 0.313, -0.69, -0.514, 0.148, 1.417, -0.175, -0.332, -0.438, 0.189, -0.164, -0.448, 0.0, 0.742, -0.376, -0.261, -0.725, -0.85, 0.199, 0.452, -0.476, 0.519, -0.797, 0.686, 0.804, -0.154, -0.537, 0.308, -0.168, 0.232, -0.447, 0.587, -0.413, 0.163, 0.912, -0.315, 0.157, 1.329, 0.061, 0.293, 0.236, -0.525, -0.055, 0.195, -0.482, -0.407, 0.388, -0.803, -0.664, 0.646, -0.488, -0.278, 0.124, 0.237, 0.673, -0.37, 0.205, 0.392, -0.028, 0.309, -0.309, 0.511, -0.901, 0.33, 0.265, 0.288, -0.261, -0.65, -0.534, -0.64, 0.181, 0.423, 0.285, -0.55, 0.27, 0.167, -0.219, 0.084, -0.448, 0.133, 0.267, -0.143, 0.153, 0.116, -0.028, 0.46, 0.512, -0.589, -0.069, 0.218, -0.382, -0.518, -0.993, 0.099, 1.0, 0.383, 0.853, 0.102, 1.206, -0.014, 1.279, 0.399, -1.037, -0.133, 0.525, -0.666, 0.672], "trl": "Δ", "p": {"adf0": 0.43760454966756945, "t": 0.7169608889704151, "lb": 0.004978085096012227, "lb2": 0.0, "sh": 9.545627609489559e-17}, "tf": "d1", "v": "No estacionaria (ADF p = 0,44, media 10,9). Su diferencia tiene media 0 y casi ninguna autocorrelación, pero los cuadrados sí tienen y no es normal.", "a": "Diferenciar una vez; es un paseo aleatorio con varianza cambiante. Modelo no lineal para la varianza.", "m": "No lineal"}, {"g": "Notebooks", "name": "AR: inflación EE. UU.", "sub": "1914–2009 · 89 para estimar, 6 para comparar", "raw": [1.005, 0.995, 7.623, 16.068, 16.525, 13.601, 14.503, -11.093, -6.342, 1.77, 0.0, 2.312, 1.136, -1.709, -1.739, 0.0, -2.367, -9.411, -10.39, -5.245, 3.031, 2.214, 1.449, 3.534, -2.105, -1.429, 0.717, 4.879, 10.332, 5.954, 1.719, 2.247, 8.004, 13.417, 7.763, -1.253, 1.253, 7.588, 1.905, 0.752, 0.746, -0.372, 1.482, 3.255, 2.807, 0.69, 1.704, 1.008, 0.998, 1.316, 1.299, 1.6, 2.817, 3.04, 4.106, 5.316, 5.564, 4.288, 3.159, 6.034, 10.468, 8.735, 5.602, 6.3, 7.316, 10.751, 12.662, 9.817, 5.978, 3.162, 4.227, 3.499, 1.842, 3.585, 4.054, 4.706, 5.262, 4.122, 2.966, 2.95, 2.528, 2.795, 2.91, 2.269, 1.546, 2.185, 3.306, 2.806, 1.569, 2.253, 2.628, 3.332, 3.175, 2.788, 3.787, -0.372], "trs": null, "trl": null, "p": null, "tf": "none", "v": "Estacionaria (ADF p = 0,026) y correlada. ACF 0,64 y 0,26; PACF 0,65 y −0,26: se corta en el retardo 2.", "a": "AR(2) con constante 3,22, φ₁ = 0,79, φ₂ = −0,25.", "m": "AR(2)", "lines": [["AIC", "AR(2) 492,1 · AR(1) 495,8"], ["Error medio (MAE) a 6 pasos", "0,27 con AR(2) frente a 0,47 con solo la media"], ["Predicción", "2,01 · 2,67 · 3,08 · 3,25 · 3,28 · 3,26"]]}, {"g": "Notebooks", "name": "MA", "sub": "655 datos para estimar, 5 para comparar", "raw": null, "trs": null, "trl": null, "p": null, "tf": "none", "v": "El archivo de datos no está en el proyecto, solo el notebook. Salida: ADF −12,16 (p ≈ 10⁻²²), estacionaria. Ljung-Box (20) = 106 (p ≈ 10⁻¹³): hay autocorrelación. Shapiro p ≈ 10⁻⁹: no normal.", "a": "Estacionaria y correlada: se necesita un modelo lineal, un MA según el nombre del notebook.", "m": "MA", "lines": [["Estacionariedad", "ADF p ≈ 10⁻²²"], ["Ljung-Box", "p ≈ 10⁻¹³ → modelo lineal"]]}, {"g": "Notebooks", "name": "ARIMA: PIB de España", "sub": "1850–2000 · 151 datos anuales", "raw": [11.568, 11.585, 11.629, 11.633, 11.644, 11.674, 11.64, 11.645, 11.678, 11.713, 11.748, 11.76, 11.774, 11.801, 11.803, 11.778, 11.82, 11.796, 11.701, 11.722, 11.757, 11.836, 11.977, 12.029, 11.964, 11.989, 12.026, 12.108, 12.069, 12.034, 12.122, 12.143, 12.157, 12.184, 12.182, 12.161, 12.138, 12.128, 12.16, 12.163, 12.165, 12.192, 12.26, 12.225, 12.24, 12.229, 12.143, 12.199, 12.268, 12.292, 12.31, 12.38, 12.337, 12.35, 12.337, 12.327, 12.386, 12.41, 12.451, 12.466, 12.423, 12.492, 12.476, 12.526, 12.488, 12.501, 12.557, 12.532, 12.525, 12.54, 12.621, 12.639, 12.688, 12.703, 12.744, 12.811, 12.794, 12.891, 12.891, 12.967, 12.92, 12.896, 12.93, 12.904, 12.952, 12.973, 12.69, 12.639, 12.637, 12.725, 12.797, 12.783, 12.849, 12.884, 12.915, 12.831, 12.885, 12.899, 12.887, 12.882, 12.914, 13.017, 13.09, 13.096, 13.158, 13.185, 13.254, 13.31, 13.376, 13.353, 13.375, 13.492, 13.583, 13.666, 13.728, 13.786, 13.857, 13.907, 13.98, 14.073, 14.164, 14.208, 14.284, 14.36, 14.417, 14.423, 14.454, 14.483, 14.498, 14.498, 14.52, 14.518, 14.531, 14.548, 14.566, 14.589, 14.621, 14.675, 14.725, 14.772, 14.809, 14.834, 14.843, 14.833, 14.857, 14.884, 14.908, 14.946, 14.99, 15.036, 15.085], "trs": null, "trl": null, "p": null, "tf": "none", "v": "Con el PIB en niveles el notebook obtiene ADF p = 1,0; con 1 diferencia p = 0,49; con 2 diferencias p ≈ 10⁻²¹, así que d = 2.", "a": "Alternativa: logaritmo y una diferencia (tasa de crecimiento). ADF p ≈ 0 y ARIMA(1,1,0) con AIC −486,2 y residuos LB p = 0,48.", "m": "ARIMA(1,1,0) en logs", "lines": [["Niveles", "d = 2 (ADF)"], ["Logaritmo", "d = 1 y AR(1) o MA(1)"], ["Modelo (0,0,0) de la plantilla", "residuos: LB 1.661, Shapiro p ≈ 10⁻¹⁶"]]}, {"g": "Tema 3 · Caso", "name": "Desempleados a tiempo parcial EE. UU.", "sub": "Mensual · 186 datos, miles", "raw": [1444.0, 1304.0, 1143.0, 1340.0, 1226.0, 1369.0, 1255.0, 1253.0, 1366.0, 1336.0, 1364.0, 1377.0, 1331.0, 1368.0, 1290.0, 1334.0, 1339.0, 1321.0, 1415.0, 1436.0, 1380.0, 1382.0, 1390.0, 1431.0, 1414.0, 1393.0, 1609.0, 1485.0, 1583.0, 1564.0, 1523.0, 1526.0, 1560.0, 1579.0, 1611.0, 1631.0, 1656.0, 1607.0, 1627.0, 1559.0, 1693.0, 1725.0, 1732.0, 1709.0, 1771.0, 1666.0, 1709.0, 1838.0, 1697.0, 1691.0, 1653.0, 1673.0, 1587.0, 1669.0, 1573.0, 1586.0, 1620.0, 1699.0, 1626.0, 1535.0, 1561.0, 1481.0, 1585.0, 1510.0, 1517.0, 1431.0, 1451.0, 1535.0, 1424.0, 1433.0, 1381.0, 1504.0, 1522.0, 1457.0, 1442.0, 1539.0, 1522.0, 1514.0, 1589.0, 1470.0, 1480.0, 1497.0, 1444.0, 1474.0, 1465.0, 1465.0, 1455.0, 1443.0, 1492.0, 1384.0, 1494.0, 1447.0, 1363.0, 1388.0, 1367.0, 1483.0, 1408.0, 1464.0, 1394.0, 1408.0, 1349.0, 1267.0, 1300.0, 1349.0, 1323.0, 1293.0, 1299.0, 1272.0, 1326.0, 1288.0, 1381.0, 1199.0, 1206.0, 1258.0, 1259.0, 1288.0, 1296.0, 1415.0, 1319.0, 1264.0, 1272.0, 1215.0, 1185.0, 1216.0, 1258.0, 1278.0, 1188.0, 1084.0, 1259.0, 1173.0, 1201.0, 1179.0, 1137.0, 1210.0, 1219.0, 1092.0, 1239.0, 1158.0, 1218.0, 1151.0, 1109.0, 1081.0, 1109.0, 1123.0, 1197.0, 1203.0, 1196.0, 1292.0, 1125.0, 1268.0, 1232.0, 1289.0, 1122.0, 1380.0, 1380.0, 1392.0, 1270.0, 1225.0, 1305.0, 1297.0, 1402.0, 1270.0, 1379.0, 1387.0, 1317.0, 1308.0, 1289.0, 1345.0, 1377.0, 1392.0, 1398.0, 1391.0, 1466.0, 1554.0, 1423.0, 1396.0, 1478.0, 1415.0, 1311.0, 1354.0, 1397.0, 1308.0, 1376.0, 1368.0, 1372.0, 1450.0], "trs": null, "trl": null, "p": null, "tf": "none", "v": "No estacionaria (ADF p = 0,53); con una diferencia sí. ACF con un pico en el retardo 1 (−0,47).", "a": "ARIMA(0,1,1), θ = −0,59. Residuos: LB p = 0,57, Shapiro p = 0,45.", "m": "ARIMA(0,1,1)", "lines": [["Predicción", "1.401 mil, plana"], ["Intervalo 95 %", "1.273–1.529 a 1 mes · 1.185–1.617 a 12 meses"]]}, {"g": "Tema 3 · Caso", "name": "Tasa de paro de España", "sub": "Trimestral · 56 datos, %", "raw": [11.55, 11.15, 11.49, 11.61, 11.99, 11.28, 11.3, 11.37, 11.5, 11.09, 10.74, 10.53, 10.17, 9.32, 8.41, 8.71, 9.03, 8.44, 8.08, 8.26, 8.42, 7.93, 8.01, 8.57, 9.6, 10.36, 11.23, 13.79, 17.24, 17.77, 17.75, 18.66, 19.84, 19.89, 19.59, 20.11, 21.08, 20.64, 21.28, 22.56, 24.19, 24.4, 24.79, 25.77, 26.94, 26.06, 25.65, 25.73, 25.93, 24.47, 23.67, 23.7, 23.78, 22.37, 21.18, 20.9], "trs": null, "trl": null, "p": null, "tf": "none", "v": "No estacionaria; ADF dudoso con pocos datos y estacionalidad. Picos en el retardo 4. Con d = 2 el modelo sobrediferencia.", "a": "SARIMA(1,1,0)(1,0,0)₄ sobre el logaritmo: φ = 0,63 y Φ = 0,63. Residuos: LB p = 0,74, Shapiro p = 0,052.", "m": "SARIMA(1,1,0)(1,0,0)₄", "lines": [["Predicción 2016T1", "20,8 % (19,3–22,4)"], ["Predicción 2017T4", "17,7 % (9,6–32,5)"], ["Escala", "predicción y límites con exp(·)"]]}, {"g": "Tema 4 · Regresión", "name": "Tipos de interés a 1 y 3 años", "sub": "EE. UU. · 2.467 datos semanales", "raw": null, "trs": null, "trl": null, "p": null, "tf": "none", "v": "En niveles R² = 96,49 % pero los residuos no son estacionarios: no hay cointegración. En variaciones R² = 82,5 % y los residuos piden un MA(1).", "a": "Regresión de las variaciones con errores MA(1) (paso 3: estimar todo junto).", "m": "Regresión + MA(1)", "lines": [["Niveles", "r₃ = 0,832 + 0,93·r₁ (residuos no estacionarios)"], ["Variaciones", "c₃ = 0,792·c₁ → con MA(1): 0,794·c₁, θ = 0,18"], ["Modelo final", "r₃,t = r₃,t−1 + 0,794(r₁,t − r₁,t−1) + a_t + 0,182·a_t−1"]]}, {"g": "Tema 4 · Regresión", "name": "Índice bursátil y tipos", "sub": "109 semanas · índice, tipo a largo, tipo a corto y €/$", "raw": [2664.0, 2610.0, 2571.0, 2411.0, 2293.0, 2338.0, 2333.0, 2240.0, 2276.0, 2214.0, 2342.0, 2266.0, 2337.0, 2145.0, 1999.0, 2092.0, 2094.0, 2191.0, 2155.0, 2164.0, 2221.0, 2371.0, 2414.0, 2362.0, 2367.0, 2410.0, 2444.0, 2394.0, 2465.0, 2568.0, 2612.0, 2582.0, 2701.0, 2678.0, 2635.0, 2630.0, 2700.0, 2678.0, 2661.0, 2688.0, 2669.0, 2650.0, 2691.0, 2775.0, 2742.0, 2693.0, 2848.0, 2860.0, 2894.0, 2921.0, 2888.0, 2976.0, 2903.0, 2897.0, 2890.0, 2890.0, 2916.0, 3044.0, 3057.0, 3178.0, 3298.0, 3434.0, 3338.0, 3250.0, 3205.0, 3167.0, 3247.0, 3328.0, 3409.0, 3551.0, 3522.0, 3419.0, 3425.0, 3488.0, 3405.0, 3489.0, 3530.0, 3526.0, 3692.0, 3691.0, 3713.0, 3815.0, 3870.0, 3998.0, 4030.0, 3930.0, 3888.0, 3782.0, 3766.0, 3742.0, 3783.0, 3686.0, 3562.0, 3631.0, 3533.0, 3532.0, 3595.0, 3519.0, 3645.0, 3741.0, 3636.0, 3581.0, 3569.0, 3365.0, 3256.0, 3249.0, 3184.0, 3302.0, 3357.0], "p": null, "tf": "none", "v": "En niveles R² = 94,7 % y DW = 0,28, pero las cuatro series no son estacionarias (ADF p de 0,41 a 0,94) y no hay cointegración (p = 0,19): la regresión en niveles engaña. En variaciones solo cuentan el tipo largo (t = −6,3) y el €/$ (p = 0,02); el tipo corto no aporta (p = 0,94).", "a": "Modelo en variaciones con errores ruido blanco (ARIMA(0,1,0) con regresoras), sin el tipo corto como variable útil. Residuos: LB p = 0,29, Shapiro p = 0,59.", "m": "Regresión en variaciones", "lines": [["Modelo", "Δíndice = −200,1·Δlargo − 1,7·Δcorto + 791,7·ΔEUR/USD + a_t"], ["Predicción", "3.073 (95 %: 2.961–3.186) para largo 12,4, corto 8,6 y €/$ 0,85"], ["Cómo se calcula", "último dato (3.357) + efecto de los cambios: −200,1·1,6 − 1,7·0,6 + 791,7·0,047 = −283,9"], ["Aviso", "la regresión en niveles daría 2.999,8, pero no es fiable"]]}];
+(()=>{
+ const P={s5:[0.58,0,0,0,0.00007],gwn:[0.0001,0.62,0.48,0.35,0.41],trend:[0.92,0.0001,0,0,0.2],ret:[0.0001,0.55,0.42,0.00001,0.0001]};
+ const ids=['d1','d2','d3','d4','d5'];
+ const out=$('#dout');
+ const row=(ok,t)=>`<div style="display:flex;gap:8px;align-items:flex-start;margin:4px 0"><span class="tag ${ok?'':'no'}" style="flex:none">${ok?'Sí':'No'}</span><span>${t}</span></div>`;
+ const run=()=>{
+  const [adf,t,lb,lb2,sh]=ids.map(i=>{const v=parseFloat(document.getElementById(i).value);return isFinite(v)?v:NaN});
+  if([adf,t,lb,lb2,sh].some(isNaN)){out.innerHTML='<p class="read">Rellena los cinco p-valores.</p>';return}
+  const est=adf<.05,zero=t>=.05,unc=lb>=.05,ind=lb2>=.05,nor=sh>=.05,wn=zero&&unc;
+  let h='';
+  h+=row(est,`Estacionaria en la media (ADF p = ${adf}): `+(est?'sí.':'no. Transforma (Δ para la media, log para la varianza) y repite el ADF.'));
+  h+=row(unc,`Datos incorrelados (Ljung-Box p = ${lb}): `+(unc?'sí, no hay autocorrelación.':'no, hay autocorrelación.'));
+  h+=row(zero,`Media cero (t p = ${t}): `+(zero?'sí.':'no, la media es distinta de 0.'));
+  h+=row(wn,`<b>WN</b>: `+(wn?'sí, media cero e incorrelada.':'no. Entonces tampoco es SWN ni GWN.'));
+  h+=row(wn&&ind,`<b>SWN</b> (Ljung-Box de y² p = ${lb2}): `+(!wn?'no, porque no es WN.':ind?'sí, los cuadrados no tienen estructura.':'no, los cuadrados tienen autocorrelación: la varianza cambia con el tiempo.'));
+  h+=row(wn&&ind&&nor,`<b>GWN</b> (Shapiro p = ${sh}): `+(!(wn&&ind)?'no, porque no es SWN.':nor?'sí, además es normal.':'no, no es normal.'));
+  let m;
+  if(!unc)m='Hay autocorrelación: <b>necesita un modelo lineal</b> (ARMA/ARIMA). Ve al paso 6.';
+  else m='Ya es ruido blanco: <b>no hace falta modelo lineal</b>. '+(ind?'Los cuadrados no tienen estructura, así que tampoco hace falta uno no lineal.':'Los cuadrados sí tienen estructura: <b>se estudia un modelo no lineal</b>.');
+  out.innerHTML=h+`<p class="read"><b>Conclusión:</b> ${m}</p>`;
+ };
+ ids.forEach(i=>document.getElementById(i).addEventListener('input',run));
+ seg('dm',k=>{P[k].forEach((v,i)=>document.getElementById(ids[i]).value=v);run()});
+})();
+
+/* Casos prácticos */
+(()=>{
+ const grp=[...new Set(CASES.map(c=>c.g))],sg=document.getElementById('cg');
+ sg.innerHTML=grp.map(g=>`<button data-v="${g}">${g}</button>`).join('');
+ const sp=(d,col)=>{const W=300,H=64,p=4,mn=Math.min(...d),mx=Math.max(...d),X=i=>p+i/(d.length-1||1)*(W-2*p),Y=v=>H-p-(v-mn)/((mx-mn)||1)*(H-2*p);
+  return `<svg class="sp" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="gráfico de la serie"><path d="${d.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('')}" fill="none" style="stroke:${col};stroke-width:1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`};
+ const fl=p=>{const est=p.adf0<.05,zero=p.t>=.05,unc=p.lb>=.05,ind=p.lb2>=.05,nor=p.sh>=.05,wn=zero&&unc;return{est,zero,unc,wn,swn:wn&&ind,gwn:wn&&ind&&nor}};
+ const yn=b=>`<td class="${b?'ok':'bad'}">${b?'Sí':'No'}</td>`;
+ const TF={none:'ninguna',d1:'Δ',d2:'Δ²',ld1:'log y Δ'};
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+ const show=g=>{const L=CASES.filter(c=>c.g===g),S=L.filter(c=>c.p);
+  const cm=document.getElementById('cm');
+  if(S.length){cm.hidden=false;cm.innerHTML=`<table class="mx"><tr><th>Serie</th><th>Estacionaria</th><th>Transformación</th><th>Media 0</th><th>Incorrelada</th><th>WN</th><th>SWN</th><th>GWN</th></tr>`+S.map(c=>{const f=fl(c.p);return `<tr><td>${esc(c.name)}</td>${yn(f.est)}<td>${TF[c.tf]}</td>${yn(f.zero)}${yn(f.unc)}${yn(f.wn)}${yn(f.swn)}${yn(f.gwn)}</tr>`}).join('')+`</table>`}else{cm.hidden=true;cm.innerHTML=''}
+  document.getElementById('cc').innerHTML=L.map(c=>{
+   let h=`<div class="case"><h4>${esc(c.name)}</h4><div class="sub">${esc(c.sub)}</div>`;
+   if(c.m)h+=`<div class="chips"><span class="chip">${esc(c.m)}</span></div>`;
+   if(c.raw)h+=sp(c.raw,'var(--c1)')+`<div class="sl">${c.tf!=='none'||c.trs?'serie original':'serie'}</div>`;
+   if(c.trs)h+=sp(c.trs,'var(--c2)')+`<div class="sl">tras ${esc(c.trl||TF[c.tf])}</div>`;
+   h+=`<p>${esc(c.v)}</p>`;
+   if(c.lines)h+='<dl>'+c.lines.map(l=>`<dt>${esc(l[0])}</dt><dd>${esc(l[1])}</dd>`).join('')+'</dl>';
+   h+=`<div class="do"><b>Qué hacer:</b> ${esc(c.a)}</div>`;
+   if(c.p){const p=c.p,f=v=>v<0.001?'<0,001':v.toFixed(3).replace('.',',');
+    h+=`<dl><dt>p ADF${c.tf!=='none'?' (original)':''}</dt><dd>${f(p.adf0)}</dd></dl>`;
+    if(c.tf!=='none')h+=`<div class="sl">Resto de tests, tras ${esc(c.trl||TF[c.tf])}:</div>`;
+    h+=`<dl><dt>p media 0</dt><dd>${f(p.t)}</dd><dt>p Ljung-Box</dt><dd>${f(p.lb)}</dd><dt>p Ljung-Box sobre y²</dt><dd>${f(p.lb2)}</dd><dt>p Shapiro</dt><dd>${f(p.sh)}</dd></dl>`}
+   return h+'</div>'}).join('')};
+ const bs=[...sg.querySelectorAll('button')];
+ const set=b=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));show(b.dataset.v)};
+ bs.forEach(b=>b.addEventListener('click',()=>set(b)));set(bs[0]);
+})();
+
+</script>
+
+</body>
+</html>
